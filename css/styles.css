@@ -18,6 +18,14 @@ canvas {
   width: 100%;
 }
 
+#canvas-wrapper2 {
+  display: flex;
+  flex: 1 0 auto;
+  align-items: center;
+  justify-content: center;
+  background-color: red;
+}
+
 #dragdrop {
   display: flex;
   flex: 1 0 auto;

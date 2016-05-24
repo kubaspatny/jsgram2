@@ -7,7 +7,7 @@ var ControlsController = function(){
     this._cropControls = document.querySelector("#crop-controls");
     this.dd = document.querySelector('#dragdrop');
     this.loading = document.querySelector('#loading-wrapper');
-    this.canvas = document.querySelector('canvas');
+    this.canvas = document.querySelector('#canvas-wrapper2');
     this.cropControlsVisible = 0;
 
     // ------------- BRIGHTNESS CONTROLS ------------
@@ -58,11 +58,12 @@ ControlsController.prototype._readImage = function(file) {
 ControlsController.prototype._setImage = function(e) {
   var img = new Image();
   img.src = e.target.result;
-  this.canvasRenderer._setBaseImage(img);
-
+  
   this._hide(this.dd);
   this._hide(this.loading);
   this._show(this.canvas);
+
+  this.canvasRenderer._setBaseImage(img);
 }
 
 ControlsController.prototype._toggleCropControls = function () {
