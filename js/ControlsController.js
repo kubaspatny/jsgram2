@@ -6,6 +6,8 @@ var ControlsController = function(){
 
     this._cropControls = document.querySelector("#crop-controls");
     this.dd = document.querySelector('#dragdrop');
+    this.loading = document.querySelector('#loading-wrapper');
+    this.canvas = document.querySelector('canvas');
     this.cropControlsVisible = 0;
 
     // ------------- BRIGHTNESS CONTROLS ------------
@@ -33,12 +35,34 @@ ControlsController.prototype._onDragover = function(e){
 ControlsController.prototype._onDrop = function (e) {
     e.preventDefault();
     console.log('_onDrop');
+    this._show(this.loading);
+    this._hide(this.dd);
     
     var files = e.dataTransfer.files;
     if (files.length > 0) {
-      // this._showInfo(files);
-      console.log(files);
+      this._readImage(files[0]);   
     }
+}
+
+ControlsController.prototype._readImage = function(file) {
+  if (file.type.match(/image\/.+/) != null) {  
+    var fr = new FileReader();
+    fr.addEventListener("load", this._setImage.bind(this));
+    fr.readAsDataURL(file); 
+  } else {
+    this._hide(this.loading);
+    this._show(this.dd);  
+  }
+}
+
+ControlsController.prototype._setImage = function(e) {
+  var img = new Image();
+  img.src = e.target.result;
+  this.canvasRenderer._setBaseImage(img);
+
+  this._hide(this.dd);
+  this._hide(this.loading);
+  this._show(this.canvas);
 }
 
 ControlsController.prototype._toggleCropControls = function () {
@@ -76,11 +100,24 @@ ControlsController.prototype._setOnCanvasRenderer = function (listener) {
 };
 
 ControlsController.prototype._show = function(element){
-  element.style.display = 'block';
+  if(isFlexable(element)){
+    element.style.display = 'flex';
+  } else {
+    element.style.display = 'block';  
+  }
+  
   this.canvasRenderer._onResize();
 }
 
 ControlsController.prototype._hide = function(element){
   element.style.display = 'none';
   this.canvasRenderer._onResize();
+}
+
+function isFlexable(element){
+  return hasClass(element, "flexable");
+}
+
+function hasClass(element, cls) {
+    return (' ' + element.className + ' ').indexOf(' ' + cls + ' ') > -1;
 }
