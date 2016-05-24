@@ -74,6 +74,8 @@ ControlsController.prototype._toggleCropControls = function () {
       this.cropControlsVisible = 0;
       this._hide(this._cropControls);
     }
+
+    this.canvasRenderer._setEditMode(this.cropControlsVisible);
 };
 
 ControlsController.prototype._toggleBrightnessControls = function () {
@@ -86,6 +88,8 @@ ControlsController.prototype._toggleBrightnessControls = function () {
       this.brightnessControlsVisible = 0;
       this._hide(this._brightnessControls);
     }
+
+    this.canvasRenderer._setEditMode(this.brightnessControlsVisible);
 };
 
 ControlsController.prototype._updateBrightnessImage = function(){

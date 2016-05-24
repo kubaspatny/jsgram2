@@ -4,6 +4,12 @@ var CanvasRenderer = function(debug){
   this.dd = document.querySelector("#dragdrop");
   this.main = document.querySelector('#canvas-wrapper');
   this.canvasData = [];
+  this.canvasImageData = [];
+  this.tempImage = null;
+  this.isEditMode = 0;
+
+  this.dialog = document.querySelector('#loadingDialog');
+  this.overlay = document.querySelector('#dialogOverlay');
 
   if(debug){
     this.main.className += " blue";
@@ -11,6 +17,10 @@ var CanvasRenderer = function(debug){
 
   window.addEventListener('resize', this._onResize.bind(this));
   window.addEventListener('load', this._fitCanvasToContainer.bind(this));
+}
+
+CanvasRenderer.prototype._setEditMode = function(editMode){
+  this.isEditMode = editMode;
 }
 
 CanvasRenderer.prototype._onResize = function(){
@@ -38,7 +48,11 @@ CanvasRenderer.prototype._fitCanvasToContainer = function() {
 }
 
 CanvasRenderer.prototype._setBaseImage = function(img) {
-  this.canvasData = [this._getBaseImageData(img)];
+  this.canvasData = [img];
+  this.canvasImageData = [this._getImageData(img)];
+  this.tempImage = img;
+
+  this.isLargeInstance = img.width > 2000 || img.height > 2000;
   this._redraw();
 }
 
@@ -49,13 +63,14 @@ CanvasRenderer.prototype._redraw = function(){
     console.log('currently items in history: ' +  canvasDataLen);
 
     // check temporary canvas data len
-    if(canvasDataLen > 0){
-      var curImageData = this.canvasData[canvasDataLen - 1];
-      this._drawImageData(curImageData);
+    if(this.isEditMode){
+      this._drawImage(this.tempImage);
+    } else if(canvasDataLen > 0){
+      this._drawImage(this.canvasData[canvasDataLen - 1]);
     }
 }
 
-CanvasRenderer.prototype._getBaseImageData = function(img){
+CanvasRenderer.prototype._getImageData = function(img) {
   var canvas = document.createElement('canvas');
   canvas.width = img.width;
   canvas.height = img.height;
@@ -64,14 +79,17 @@ CanvasRenderer.prototype._getBaseImageData = function(img){
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(img, 0,0);
 
-  var imageData = ctx.getImageData(0, 0, img.width, img.height);
+  return ctx.getImageData(0, 0, img.width, img.height);;
+}
 
-  console.log('--------------------------------------');
-  console.log('image data size: [' + imageData.width + ',' + imageData.height + ']');
-  console.log('original image size: [' + img.width + ',' + img.height + ']');
-  console.log('--------------------------------------');
+CanvasRenderer.prototype._setTempImage = function(imageData) {
+  var canvas = document.createElement('canvas');
+  canvas.width = imageData.width;
+  canvas.height = imageData.height;
 
-  return imageData;
+  var ctx = canvas.getContext("2d");
+  ctx.putImageData(imageData, 0, 0);
+  this.tempImage.src = canvas.toDataURL();
 }
 
 CanvasRenderer.prototype._drawImageData = function(imageData){
@@ -121,8 +139,8 @@ CanvasRenderer.prototype.applyFilter = function(func){
   ctx.putImageData(this.imageData, this.offsetX, this.offsetY);
 }
 
-function copyImageData(context, original) {
-  var rv = context.createImageData(original.width, original.height);
+CanvasRenderer.prototype.copyImageData = function(original) {
+  var rv = this.canvas.getContext("2d").createImageData(original.width, original.height);
   
   for (var i = 0; i < original.data.length; ++i){
     rv.data[i] = original.data[i];  
@@ -141,18 +159,16 @@ CanvasRenderer.prototype.createImageData = function(w, h){
 }
 
 CanvasRenderer.prototype.applyBrightnessContrast = function(brigtness, contrast){
-  var ctx = this.canvas.getContext("2d");
-  var hRatio = this.canvas.width  / img.width; //NOT GOING TO WORK AFTER CROPPING
-  var vRatio = this.canvas.height / img.height;
-  var ratio  = Math.min (hRatio, vRatio);
-  this.offsetX = (this.canvas.width - img.width*ratio) / 2;
-  this.offsetY = (this.canvas.height - img.height*ratio) / 2;
+  this.showProgress();
 
-  // this.imageData = ctx.getImageData(this.offsetX, this.offsetY, img.width*ratio, img.height*ratio);
-  imageDataCopy = Filters.BrightnessContrast(this.imageData, copyImageData(ctx, this.imageData), brigtness, contrast);
-  // this.imageData = imageDataCopy; //TODO backup imageData to be able to step back
-
-  ctx.putImageData(imageDataCopy, this.offsetX, this.offsetY);
+  setTimeout(function(){
+    var imageData = this.canvasImageData[this.canvasImageData.length - 1];
+    imageDataCopy = Filters.BrightnessContrast(imageData, this.copyImageData(imageData), brigtness, contrast);
+    this._setTempImage(imageDataCopy);
+    this._redraw();
+   
+    this.hideProgress(); 
+  }.bind(this), 100);
 }
 
 CanvasRenderer.prototype.applyMosaic = function(blockSize){
@@ -184,6 +200,22 @@ CanvasRenderer.prototype.applyOil = function(range, levels){
 
   ctx.putImageData(this.imageData, this.offsetX, this.offsetY);
 }
+
+CanvasRenderer.prototype.showProgress = function(){
+  if(this.isLargeInstance){
+    this.dialog.className += " md-show";
+    this.overlay.className += " md-show";  
+  }
+}
+
+CanvasRenderer.prototype.hideProgress = function(){
+  if(this.isLargeInstance){
+    this.dialog.className = this.dialog.className.replace(/(?:^|\s)md-show(?!\S)/g , '');
+    this.overlay.className = this.overlay.className.replace(/(?:^|\s)md-show(?!\S)/g , '');
+  }
+}
+
+
 
 
 

@@ -8,6 +8,7 @@
       <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
       <link type="text/css" rel="stylesheet" href="css/materialize.css"/>
       <link rel="stylesheet" href="css/styles.css">
+      <link rel="stylesheet" href="css/dialog.css">
 
 
       <script type="text/javascript" src="js/CanvasRenderer.js"></script>
@@ -19,6 +20,24 @@
 
 	</head>
   <body class="blue-grey lighten-2">
+
+    <!-- Progress - Processing Image -->
+    <div class="md-modal" id="loadingDialog">
+      <div class="md-content">
+        <h4>Processing Image</h4>
+        <div>
+          <div class="spinner">
+            <div class="bounce1"></div>
+            <div class="bounce2"></div>
+            <div class="bounce3"></div>
+          </div> 
+        </div>
+      </div>
+    </div>
+
+    <div id="dialogOverlay" class="md-overlay"></div>
+    <!--  -->
+
     <header>
       <nav class="blue-grey darken-4">
         <div class="nav-wrapper">
