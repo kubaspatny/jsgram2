@@ -26,6 +26,14 @@ var ControlsController = function(){
 
     this.dd.addEventListener("drop", this._onDrop.bind(this));
     this.dd.addEventListener("dragover", this._onDragover.bind(this));
+
+    this.confirmDialog = document.querySelector('#confirmDialog');
+    this.confirmTitle = document.querySelector('#confirmTitle');
+    this.confirmText = document.querySelector('#confirmText');
+    this.confirmDiscard = document.querySelector('#confirmDiscard');
+    this.confirmSave = document.querySelector('#confirmSave');
+    this.overlay = document.querySelector('#dialogOverlay');
+    
 }
 
 ControlsController.prototype._onDragover = function(e){
@@ -81,15 +89,27 @@ ControlsController.prototype._toggleCropControls = function () {
 ControlsController.prototype._toggleBrightnessControls = function () {
     if(this.brightnessControlsVisible == 0){
       this.brightnessControlsVisible = 1;
+      this.canvasRenderer._setEditMode(1); // maybe put to end of this block
       this._brightnessSlider.value = "0";
       this._contrastSlider.value = "0";
       this._show(this._brightnessControls);
     } else {
-      this.brightnessControlsVisible = 0;
-      this._hide(this._brightnessControls);
+      this._showConfirm('Unsaved changes', 'Do you want to save changes?', function(){
+          this.canvasRenderer._setEditMode(0);
+          this.canvasRenderer._saveTempChanges();
+          this.brightnessControlsVisible = 0;
+          this._hide(this._brightnessControls);
+          this._hideConfirm();  
+          this.canvasRenderer._redraw();
+      }.bind(this), function(){
+          this.canvasRenderer._setEditMode(0);
+          this.canvasRenderer._resetTempChanges();
+          this.brightnessControlsVisible = 0;
+          this._hide(this._brightnessControls);
+          this._hideConfirm(); 
+          this.canvasRenderer._redraw();
+      }.bind(this));
     }
-
-    this.canvasRenderer._setEditMode(this.brightnessControlsVisible);
 };
 
 ControlsController.prototype._updateBrightnessImage = function(){
@@ -125,4 +145,25 @@ function isFlexable(element){
 
 function hasClass(element, cls) {
     return (' ' + element.className + ' ').indexOf(' ' + cls + ' ') > -1;
+}
+
+ControlsController.prototype._showConfirm = function(title, label, ok, cancel) {
+    this.confirmTitle.innerHTML = title;
+    this.confirmText.innerHTML = label;
+    this.confirmSave.addEventListener("click", function(){
+      this._hideConfirm();
+      ok();
+    }.bind(this));
+    this.confirmDiscard.addEventListener("click", function(){
+      this._hideConfirm();
+      cancel();
+    }.bind(this));
+
+    this.confirmDialog.className += " md-show";
+    this.overlay.className += " md-show";  
+}
+
+ControlsController.prototype._hideConfirm = function(){
+    this.confirmDialog.className = this.confirmDialog.className.replace(/(?:^|\s)md-show(?!\S)/g , '');
+    this.overlay.className = this.overlay.className.replace(/(?:^|\s)md-show(?!\S)/g , '');
 }

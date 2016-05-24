@@ -6,10 +6,12 @@ var CanvasRenderer = function(debug){
   this.canvasData = [];
   this.canvasImageData = [];
   this.tempImage = null;
+  this.tempImageData = null;
   this.isEditMode = 0;
 
   this.dialog = document.querySelector('#loadingDialog');
   this.overlay = document.querySelector('#dialogOverlay');
+  this.downloadLink = document.querySelector('#save-button');
 
   if(debug){
     this.main.className += " blue";
@@ -23,13 +25,21 @@ CanvasRenderer.prototype._setEditMode = function(editMode){
   this.isEditMode = editMode;
 }
 
+CanvasRenderer.prototype._saveTempChanges = function(){
+  this.canvasData.push(this.tempImage);
+  this.canvasImageData.push(this.tempImageData);
+}
+
+CanvasRenderer.prototype._resetTempChanges = function(){
+  this.tempImage = this.canvasData[this.canvasData.length - 1];
+  this.tempImageData = this.canvasImageData[this.canvasImageData.length - 1];  
+}
+
 CanvasRenderer.prototype._onResize = function(){
     this._fitCanvasToContainer();
 }
 
 CanvasRenderer.prototype._fitCanvasToContainer = function() {
-  console.log('_fitCanvasToContainer');
-
   // set the canvas size to 0, so that the wrapper can size based on
   // the flex magic -> then read that size and set it to canvas
   this.canvas.width = 0;
@@ -38,34 +48,32 @@ CanvasRenderer.prototype._fitCanvasToContainer = function() {
   var rect = this.canvasWrap.getBoundingClientRect();
   this.canvas.width = rect.width;
   this.canvas.height = rect.height;
-  console.log('setting canvas size: [' + this.canvas.width + 'x' + this.canvas.height + ']');
-
-  rect = this.dd.getBoundingClientRect();
-  console.log('dd size: [' + rect.width + 'x' + rect.height + ']');
 
   this._redraw();
-  // window.requestAnimationFrame(this._fitCanvasToContainer.bind(this));
 }
 
 CanvasRenderer.prototype._setBaseImage = function(img) {
   this.canvasData = [img];
   this.canvasImageData = [this._getImageData(img)];
   this.tempImage = img;
+  this.tempImageData = this.canvasImageData[0];
 
   this.isLargeInstance = img.width > 2000 || img.height > 2000;
   this._redraw();
+
+  this.downloadLink.setAttribute("download", "JSGramImage.jpg");
+  this.downloadLink.setAttribute("href", this.canvasData[0].src);
 }
 
 CanvasRenderer.prototype._redraw = function(){
-    console.log('_redraw: [' + this.canvas.width + 'x' + this.canvas.height + ']');
-    
     var canvasDataLen = this.canvasData.length;
     console.log('currently items in history: ' +  canvasDataLen);
 
-    // check temporary canvas data len
     if(this.isEditMode){
+      console.log('_redraw - in edit mode');
       this._drawImage(this.tempImage);
     } else if(canvasDataLen > 0){
+      console.log('_redraw - in normal mode');
       this._drawImage(this.canvasData[canvasDataLen - 1]);
     }
 }
@@ -89,7 +97,10 @@ CanvasRenderer.prototype._setTempImage = function(imageData) {
 
   var ctx = canvas.getContext("2d");
   ctx.putImageData(imageData, 0, 0);
+  this.tempImage = new Image();
   this.tempImage.src = canvas.toDataURL();
+
+  this.tempImageData = imageData;
 }
 
 CanvasRenderer.prototype._drawImageData = function(imageData){

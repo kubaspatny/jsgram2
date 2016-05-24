@@ -22,6 +22,19 @@
   <body class="blue-grey lighten-2">
 
     <!-- Progress - Processing Image -->
+    <div class="md-modal" id="confirmDialog">
+      <div class="md-content">
+        <h4 id="confirmTitle">Unsaved changes</h4>
+        <div id="confirmText">
+          Do you want to save changes?  
+        </div>
+        <div class="controls-wrapper">
+          <button id="confirmDiscard" class="btn-flat">Discard</button>
+          <button id="confirmSave" class="btn-flat">Save</button>
+        </div>
+      </div>
+    </div>
+
     <div class="md-modal" id="loadingDialog">
       <div class="md-content">
         <h4>Processing Image</h4>

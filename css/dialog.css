@@ -51,6 +51,7 @@
 	position: relative;
 	border-radius: 3px;
 	margin: 0 auto;
+	overflow: hidden;
 }
 
 .md-content h4 {
@@ -71,10 +72,8 @@
 	font-size: 1.15em;
 }
 
-.md-content button {
-	display: block;
-	margin: 0 auto;
-	font-size: 0.8em;
+.md-content .controls-wrapper {
+	float: right;
 }
 
 .md-content {
