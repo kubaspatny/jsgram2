@@ -1,0 +1,39 @@
+header {
+  background-color: #aabbcc;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+header > logo {
+  position: relative;
+  float: left;
+  margin-bottom: 0;
+  line-height: 30px;
+}
+
+nav > ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  background-color: #333;
+}
+
+nav > ul > li {
+  position: relative;
+  float: right;
+  margin-bottom: 0;
+  margin-left: 15px;
+}
+
+nav > ul > li a {
+  display: block;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+nav > ul > li > a:hover {
+  background-color: #ff0000;
+}

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+	    <title>JSGram</title>
+
+
+      <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+      <link type="text/css" rel="stylesheet" href="css/materialize.css"/>
+      <link rel="stylesheet" href="css/styles.css">
+
+
+      <script type="text/javascript" src="js/CanvasRenderer.js"></script>
+      <script type="text/javascript" src="js/ControlsController.js"></script>
+      <script type="text/javascript" src="js/Filters.js"></script>
+
+      <!--Let browser know website is optimized for mobile-->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+	</head>
+  <body class="blue-grey lighten-2">
+    <header>
+      <nav class="blue-grey darken-4">
+        <div class="nav-wrapper">
+          <a href="#" id="logo" class="brand-logo">JSGram</a>
+          <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+          <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <li><a href="#" id="crop-button" class="tooltipped" data-tooltip="Crop"><i class="material-icons">crop</i></a></li>
+            <li><a href="#" id="brightness-button" class="tooltipped" data-tooltip="Brightness and Contrast"><i class="material-icons">brightness_medium</i></a></li>
+            <li><a href="#" id="filters-button" class="tooltipped" data-tooltip="Filters"><i class="material-icons">filter_hdr</i></a></li>
+            
+            <li><a href="#" id="save-button" class="tooltipped" data-tooltip="Save"><i class="material-icons">save</i></a></li>
+            <li><a href="#" id="discard-button" class="tooltipped" data-tooltip="Discard"><i class="material-icons">delete</i></a></li>
+          </ul>
+
+          <ul class="side-nav" id="mobile-demo">
+            <li><a href="#"><i class="material-icons left">crop</i>Crop</a></li>
+            <li><a href="#"><i class="material-icons left">brightness_medium</i>Brightness</a></li>
+            <li><a href="#"><i class="material-icons left">filter_hdr</i>Filters</a></li>
+            
+            <li><a href="#"><i class="material-icons left">save</i>Save</a></li>
+            <li><a href="#"><i class="material-icons left">delete</i>Discard</a></li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+
+    <main id="canvas-wrapper">
+        <canvas style="display: none;"></canvas>
+        <div id="dragdrop">
+            <p>Drag and Drop your photos here!</p>
+        </div>
+    </main>
+
+    <footer class="page-footer blue-grey darken-4">
+      <div id="crop-controls" style="display: none;">
+        <a class="btn-flat right white-text m-t-10 m-b-10">discard</a>
+        <a class="btn-flat right white-text m-t-10 m-b-10">save</a>
+      </div>
+
+      <div id="brightness-controls" style="display: none;">
+
+        <table id="brightness-sliders" class="left white-text m-t-10 m-b-10">
+          <tbody>
+            <tr>
+              <td>Brightness</td>
+              <td>Contrast</td>
+              
+            </tr>
+            <tr>
+              <td><input id="brightness-slider" class="left" type="range" min="-100" max="100" step="1"/></td>
+              <td><input id="contrast-slider" class="left" type="range" min="-100" max="100" step="1"/></td>
+              
+            </tr>
+          </tbody>
+        </table>
+        
+        <a class="btn-flat right white-text m-t-10 m-b-10">discard</a>
+        <a class="btn-flat right white-text m-t-10 m-b-10">save</a>
+      </div>
+    </footer>
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="js/materialize.js"></script>
+    <script>
+      $( document ).ready(function() {
+          $(".button-collapse").sideNav();
+          $('.tooltipped').tooltip({delay: 300});
+      });
+
+      var renderer = new CanvasRenderer(false);
+      var controls = new ControlsController();
+      controls._setOnCanvasRenderer(renderer);
+    </script>
+	</body>
+</html>
