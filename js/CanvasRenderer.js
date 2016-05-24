@@ -38,7 +38,7 @@ CanvasRenderer.prototype._fitCanvasToContainer = function() {
 }
 
 CanvasRenderer.prototype._setBaseImage = function(img) {
-  this.canvasData = [img];
+  this.canvasData = [this._getBaseImageData(img)];
   this._redraw();
 }
 
@@ -50,11 +50,50 @@ CanvasRenderer.prototype._redraw = function(){
 
     // check temporary canvas data len
     if(canvasDataLen > 0){
-      this.drawImage(this.canvasData[canvasDataLen - 1]);    
+      var curImageData = this.canvasData[canvasDataLen - 1];
+      this._drawImageData(curImageData);
     }
 }
 
-CanvasRenderer.prototype.drawImage = function(img){
+CanvasRenderer.prototype._getBaseImageData = function(img){
+  var canvas = document.createElement('canvas');
+  canvas.width = img.width;
+  canvas.height = img.height;
+
+  var ctx = canvas.getContext("2d");
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img, 0,0);
+
+  var imageData = ctx.getImageData(0, 0, img.width, img.height);
+
+  console.log('--------------------------------------');
+  console.log('image data size: [' + imageData.width + ',' + imageData.height + ']');
+  console.log('original image size: [' + img.width + ',' + img.height + ']');
+  console.log('--------------------------------------');
+
+  return imageData;
+}
+
+CanvasRenderer.prototype._drawImageData = function(imageData){
+  var canvas = document.createElement('canvas');
+  canvas.width = imageData.width;
+  canvas.height = imageData.height;
+
+  var ctx = canvas.getContext("2d");
+  var hRatio = this.canvas.width  / imageData.width;
+  var vRatio = this.canvas.height / imageData.height;
+  var ratio  = Math.min (hRatio, vRatio);
+  this.offsetX = (this.canvas.width - imageData.width*ratio) / 2;
+  this.offsetY = (this.canvas.height - imageData.height*ratio) / 2;
+
+  ctx.putImageData(imageData, this.offsetX, this.offsetY);
+
+  var image = new Image();
+  image.src = canvas.toDataURL();
+  this._drawImage(image);
+}
+
+CanvasRenderer.prototype._drawImage = function(img){
   var hRatio = this.canvas.width  / img.width;
   var vRatio = this.canvas.height / img.height;
   var ratio  = Math.min (hRatio, vRatio);
@@ -64,15 +103,6 @@ CanvasRenderer.prototype.drawImage = function(img){
   var ctx = this.canvas.getContext("2d");
   ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   ctx.drawImage(img, 0,0, img.width, img.height, this.offsetX, this.offsetY, img.width*ratio, img.height*ratio);
-
-  this.imageData = ctx.getImageData(this.offsetX, this.offsetY, img.width*ratio, img.height*ratio);
-
-  // this.applyFilter(Filters.Grayscale.bind(Filters));
-  // this.applyFilter(Filters.Invert.bind(Filters));
-  // this.applyFilter(Filters.Sepia.bind(Filters));
-  // this.applyFilter(Filters.Solarize.bind(Filters));
-  // this.applyBrightnessContrast(50, 0);
-  // this.applyMosaic(10);
 }
 
 CanvasRenderer.prototype.applyFilter = function(func){
