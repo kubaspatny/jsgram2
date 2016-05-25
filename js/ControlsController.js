@@ -65,13 +65,14 @@ ControlsController.prototype._readImage = function(file) {
 
 ControlsController.prototype._setImage = function(e) {
   var img = new Image();
-  img.src = e.target.result;
+  img.onload = function () {
+    this._hide(this.dd);
+    this._hide(this.loading);
+    this._show(this.canvas);
+    this.canvasRenderer._setBaseImage(img);
+  }.bind(this);
   
-  this._hide(this.dd);
-  this._hide(this.loading);
-  this._show(this.canvas);
-
-  this.canvasRenderer._setBaseImage(img);
+  img.src = e.target.result;
 }
 
 ControlsController.prototype._toggleCropControls = function () {

@@ -58,11 +58,11 @@ CanvasRenderer.prototype._setBaseImage = function(img) {
   this.tempImage = img;
   this.tempImageData = this.canvasImageData[0];
 
+  // this.downloadLink.setAttribute("download", "JSGramImage.jpg");
+  // this.downloadLink.setAttribute("href", canvas.toDataURL());
+
   this.isLargeInstance = img.width > 2000 || img.height > 2000;
   this._redraw();
-
-  this.downloadLink.setAttribute("download", "JSGramImage.jpg");
-  this.downloadLink.setAttribute("href", this.canvasData[0].src);
 }
 
 CanvasRenderer.prototype._redraw = function(){
