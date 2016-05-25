@@ -134,22 +134,6 @@ CanvasRenderer.prototype._drawImage = function(img){
   ctx.drawImage(img, 0,0, img.width, img.height, this.offsetX, this.offsetY, img.width*ratio, img.height*ratio);
 }
 
-CanvasRenderer.prototype.applyFilter = function(func){
-  var ctx = this.canvas.getContext("2d");
-  var hRatio = this.canvas.width  / img.width;
-  var vRatio = this.canvas.height / img.height;
-  var ratio  = Math.min (hRatio, vRatio);
-  this.offsetX = (this.canvas.width - img.width*ratio) / 2;
-  this.offsetY = (this.canvas.height - img.height*ratio) / 2;
-
-  this.imageData = ctx.getImageData(this.offsetX, this.offsetY, img.width*ratio, img.height*ratio);
-
-  imageDataCopy = func(this.imageData, copyImageData(ctx, this.imageData));
-  this.imageData = imageDataCopy; //TODO backup imageData to be able to step back
-
-  ctx.putImageData(this.imageData, this.offsetX, this.offsetY);
-}
-
 CanvasRenderer.prototype.copyImageData = function(original) {
   var rv = this.canvas.getContext("2d").createImageData(original.width, original.height);
   
@@ -182,6 +166,19 @@ CanvasRenderer.prototype.applyBrightnessContrast = function(brigtness, contrast)
   }.bind(this), 100);
 }
 
+CanvasRenderer.prototype.applyFilter = function(func){
+  this.showProgress();
+
+  setTimeout(function(){
+    var imageData = this.canvasImageData[this.canvasImageData.length - 1];
+    imageDataCopy = func(imageData, this.copyImageData(imageData));
+    this._setTempImage(imageDataCopy);
+    this._redraw(); 
+   
+    this.hideProgress(); 
+  }.bind(this), 100);
+}
+
 CanvasRenderer.prototype.applyMosaic = function(blockSize){
   var ctx = this.canvas.getContext("2d");
   var hRatio = this.canvas.width  / img.width; //NOT GOING TO WORK AFTER CROPPING
@@ -198,18 +195,16 @@ CanvasRenderer.prototype.applyMosaic = function(blockSize){
 }
 
 CanvasRenderer.prototype.applyOil = function(range, levels){
-  var ctx = this.canvas.getContext("2d");
-  var hRatio = this.canvas.width  / img.width; //NOT GOING TO WORK AFTER CROPPING
-  var vRatio = this.canvas.height / img.height;
-  var ratio  = Math.min (hRatio, vRatio);
-  this.offsetX = (this.canvas.width - img.width*ratio) / 2;
-  this.offsetY = (this.canvas.height - img.height*ratio) / 2;
+  this.showProgress();
 
-  this.imageData = ctx.getImageData(this.offsetX, this.offsetY, img.width*ratio, img.height*ratio);
-  imageDataCopy = Filters.Oil(this.imageData, copyImageData(ctx, this.imageData), range, levels);
-  this.imageData = imageDataCopy; //TODO backup imageData to be able to step back
-
-  ctx.putImageData(this.imageData, this.offsetX, this.offsetY);
+  setTimeout(function(){
+    var imageData = this.canvasImageData[this.canvasImageData.length - 1];
+    imageDataCopy = Filters.Oil(imageData, this.copyImageData(imageData), range, levels);
+    this._setTempImage(imageDataCopy);
+    this._redraw(); 
+   
+    this.hideProgress(); 
+  }.bind(this), 100);
 }
 
 CanvasRenderer.prototype.showProgress = function(){

@@ -33,6 +33,22 @@ var ControlsController = function(){
     this.confirmDiscard = document.querySelector('#confirmDiscard');
     this.confirmSave = document.querySelector('#confirmSave');
     this.overlay = document.querySelector('#dialogOverlay');
+
+    // --------- FILTERS CONTROLS -------------------
+    filtersButton = document.querySelector("#filters-button");
+    filtersButton.addEventListener("click", this._toggleFiltersControls.bind(this));
+
+    this._filtersControls = document.querySelector("#filters-controls");
+    this.filtersControlsVisible = 0;
+
+    filterGrayscale = document.querySelector("#filter-grayscale");
+    filterGrayscale.addEventListener("click", this._applyFilter.bind(this, Filters.Grayscale));
+
+    filterSepia = document.querySelector("#filter-sepia");
+    filterSepia.addEventListener("click", this._applyFilter.bind(this, Filters.Sepia));
+
+    filterSolarize = document.querySelector("#filter-solarize");
+    filterSolarize.addEventListener("click", this._applyFilter.bind(this, Filters.Solarize));
     
 }
 
@@ -113,12 +129,35 @@ ControlsController.prototype._toggleBrightnessControls = function () {
     }
 };
 
+ControlsController.prototype._toggleFiltersControls = function () {
+    if(this.filtersControlsVisible == 0){
+      this.filtersControlsVisible = 1;
+      this._show(this._filtersControls);
+      this.canvasRenderer._setEditMode(1);
+      this.canvasRenderer._redraw();
+    } else {
+      this.canvasRenderer._setEditMode(0);
+      this.canvasRenderer._resetTempChanges();
+      this.filtersControlsVisible = 0;
+      this._hide(this._filtersControls);
+      this.canvasRenderer._redraw();
+    }
+};
+
 ControlsController.prototype._updateBrightnessImage = function(){
   this.currentBrightness = this._brightnessSlider.value;  
   this.currentContrast = this._contrastSlider.value;
   console.log("Setting brightness and contrast: [" + this.currentBrightness + ", " + this.currentContrast + "]");
 
   this.canvasRenderer.applyBrightnessContrast(parseInt(this.currentBrightness), parseInt(this.currentContrast));
+}
+
+ControlsController.prototype._applyFilter = function(func){
+  this.canvasRenderer.applyFilter(func);
+}
+
+ControlsController.prototype._applyOil = function(){
+  this.canvasRenderer.applyOil(3, 128);
 }
 
 ControlsController.prototype._setOnCanvasRenderer = function (listener) {

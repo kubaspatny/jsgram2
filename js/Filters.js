@@ -60,7 +60,7 @@ Filters.Solarize = function (srcImageData, dstImageData) {
     var srcPixels    = srcImageData.data,
         dstPixels    = dstImageData.data;
 
-    this.utils.mapRGB(srcPixels, dstPixels, function (value) {
+    Filters.utils.mapRGB(srcPixels, dstPixels, function (value) {
         return value > 127 ? (value - 127.5) * 2 : (127.5 - value) * 2;
     });
 
@@ -72,7 +72,7 @@ Filters.Binarize = function(srcImageData, dstImageData) {
     var dstPixels    = dstImageData.data;
 
     // 0.0 <= n <= 1.0
-    threshold  = 0.9;
+    threshold  = 1;
     threshold *= 255;
 
     for (var i = 0; i < srcPixels.length; i += 4) {
@@ -89,7 +89,7 @@ Filters.Invert = function(srcImageData, dstImageData) {
     var srcPixels    = srcImageData.data;
     var dstPixels    = dstImageData.data;
 
-    this.utils.mapRGB(srcPixels, dstPixels, function (value) {
+    Filters.utils.mapRGB(srcPixels, dstPixels, function (value) {
         return 255 - value;
     });
 
