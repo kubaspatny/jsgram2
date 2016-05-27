@@ -1,6 +1,7 @@
 var ControlsController = function(){
-    // ------------- CROP CONTROLS ------------
+    this.controlsVisible = 0;
 
+    // ------------- CROP CONTROLS ------------
     cropButton = document.querySelector("#crop-button");
     cropButton.addEventListener("click", this._toggleCropControls.bind(this));
 
@@ -8,15 +9,12 @@ var ControlsController = function(){
     this.dd = document.querySelector('#dragdrop');
     this.loading = document.querySelector('#loading-wrapper');
     this.canvas = document.querySelector('#canvas-wrapper2');
-    this.cropControlsVisible = 0;
 
     // ------------- BRIGHTNESS CONTROLS ------------
-
     brightnessButton = document.querySelector("#brightness-button");
     brightnessButton.addEventListener("click", this._toggleBrightnessControls.bind(this));
 
     this._brightnessControls = document.querySelector("#brightness-controls");
-    this.brightnessControlsVisible = 0;
 
     this._brightnessSlider = document.querySelector('#brightness-slider');
     this._brightnessSlider.addEventListener('change', this._updateBrightnessImage.bind(this));
@@ -39,7 +37,6 @@ var ControlsController = function(){
     filtersButton.addEventListener("click", this._toggleFiltersControls.bind(this));
 
     this._filtersControls = document.querySelector("#filters-controls");
-    this.filtersControlsVisible = 0;
 
     filterGrayscale = document.querySelector("#filter-grayscale");
     filterGrayscale.addEventListener("click", this._applyFilter.bind(this, Filters.Grayscale));
@@ -92,56 +89,69 @@ ControlsController.prototype._setImage = function(e) {
 }
 
 ControlsController.prototype._toggleCropControls = function () {
-    if(this.cropControlsVisible == 0){
-      this.cropControlsVisible = 1;
-      this._show(this._cropControls);
-    } else {
-      this.cropControlsVisible = 0;
-      this._hide(this._cropControls);
-    }
-
+  if(this.controlsVisible == 1){
+    this.promptUnsavedChanges();
+    return;
+  } else {
+    this.controlsVisible = 1;
+    this._show(this._cropControls);
     this.canvasRenderer._setEditMode(this.cropControlsVisible);
+    this.canvasRenderer._redraw();
+  }    
 };
 
 ControlsController.prototype._toggleBrightnessControls = function () {
-    if(this.brightnessControlsVisible == 0){
-      this.brightnessControlsVisible = 1;
-      this.canvasRenderer._setEditMode(1); // maybe put to end of this block
+    if(this.controlsVisible == 1){
+      this.promptUnsavedChanges();
+      return;
+    } else {
+      this.controlsVisible = 1;
+      this.canvasRenderer._setEditMode(1);
       this._brightnessSlider.value = "0";
       this._contrastSlider.value = "0";
       this._show(this._brightnessControls);
-    } else {
-      this._showConfirm('Unsaved changes', 'Do you want to save changes?', function(){
-          this.canvasRenderer._setEditMode(0);
-          this.canvasRenderer._saveTempChanges();
-          this.brightnessControlsVisible = 0;
-          this._hide(this._brightnessControls);
-          this._hideConfirm();  
-          this.canvasRenderer._redraw();
-      }.bind(this), function(){
-          this.canvasRenderer._setEditMode(0);
-          this.canvasRenderer._resetTempChanges();
-          this.brightnessControlsVisible = 0;
-          this._hide(this._brightnessControls);
-          this._hideConfirm(); 
-          this.canvasRenderer._redraw();
-      }.bind(this));
     }
 };
 
+ControlsController.prototype.promptUnsavedChanges = function(){
+  this._showConfirm('Unsaved changes',
+                    'Do you want to save changes?',
+                    this.handleTempChanges.bind(this, true),
+                    this.handleTempChanges.bind(this, false));
+}
+
+ControlsController.prototype.handleTempChanges = function(saveTempChanges) {
+  this.canvasRenderer._setEditMode(0);
+
+  if(saveTempChanges){
+    this.canvasRenderer._saveTempChanges(); 
+  } else {
+    this.canvasRenderer._resetTempChanges();  
+  }
+  
+  this.hideAllControls();
+  this._hideConfirm();  
+  this.canvasRenderer._redraw();  
+}
+
+ControlsController.prototype.hideAllControls = function(){
+  this._hide(this._cropControls);
+  this._hide(this._brightnessControls);
+  this._hide(this._filtersControls);
+
+  this.controlsVisible = 0;
+}
+
 ControlsController.prototype._toggleFiltersControls = function () {
-    if(this.filtersControlsVisible == 0){
-      this.filtersControlsVisible = 1;
-      this._show(this._filtersControls);
-      this.canvasRenderer._setEditMode(1);
-      this.canvasRenderer._redraw();
-    } else {
-      this.canvasRenderer._setEditMode(0);
-      this.canvasRenderer._resetTempChanges();
-      this.filtersControlsVisible = 0;
-      this._hide(this._filtersControls);
-      this.canvasRenderer._redraw();
-    }
+  if(this.controlsVisible == 1){
+    this.promptUnsavedChanges();
+    return;
+  } else {
+    this.controlsVisible = 1;
+    this._show(this._filtersControls);
+    this.canvasRenderer._setEditMode(1);
+    this.canvasRenderer._redraw();
+  }
 };
 
 ControlsController.prototype._updateBrightnessImage = function(){
