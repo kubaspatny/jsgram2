@@ -65,11 +65,19 @@ CanvasRenderer.prototype._setBaseImage = function(img) {
   this._redraw();
 }
 
+CanvasRenderer.prototype._discardImage = function() {
+  this.canvasData = [];
+  this.canvasImageData = [];
+  this.tempImage = null;
+  this.tempImageData = null;
+  this.isEditMode = 0;
+}
+
 CanvasRenderer.prototype._redraw = function(){
     var canvasDataLen = this.canvasData.length;
     console.log('currently items in history: ' +  canvasDataLen);
 
-    if(this.isEditMode){
+    if(this.isEditMode && this.tempImage != null){
       console.log('_redraw - in edit mode');
       this._drawImage(this.tempImage);
     } else if(canvasDataLen > 0){

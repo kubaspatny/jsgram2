@@ -46,7 +46,10 @@ var ControlsController = function(){
 
     filterSolarize = document.querySelector("#filter-solarize");
     filterSolarize.addEventListener("click", this._applyFilter.bind(this, Filters.Solarize));
-    
+
+    // ---------- DISCARD IMAGE CONTROLS ---------------
+    discardButton = document.querySelector("#discard-button");
+    discardButton.addEventListener("click", this._discardImage.bind(this));
 }
 
 ControlsController.prototype._onDragover = function(e){
@@ -88,6 +91,20 @@ ControlsController.prototype._setImage = function(e) {
   img.src = e.target.result;
 }
 
+ControlsController.prototype._discardImage = function(){
+  this._showConfirm('Discard Image?',
+                    'Do you really want to discard your image without saving?',
+                    'Discard',
+                    function () {
+                      this.canvasRenderer._discardImage();
+                      this._show(this.dd);
+                      this._hide(this.canvas);
+                      this.hideAllControls();
+                    }.bind(this),
+                    'Cancel',
+                    function() {}.bind(this));
+}
+
 ControlsController.prototype._toggleCropControls = function () {
   if(this.controlsVisible == 1){
     this.promptUnsavedChanges();
@@ -116,7 +133,9 @@ ControlsController.prototype._toggleBrightnessControls = function () {
 ControlsController.prototype.promptUnsavedChanges = function(){
   this._showConfirm('Unsaved changes',
                     'Do you want to save changes?',
+                    'Save',
                     this.handleTempChanges.bind(this, true),
+                    'Discard',
                     this.handleTempChanges.bind(this, false));
 }
 
@@ -129,8 +148,7 @@ ControlsController.prototype.handleTempChanges = function(saveTempChanges) {
     this.canvasRenderer._resetTempChanges();  
   }
   
-  this.hideAllControls();
-  this._hideConfirm();  
+  this.hideAllControls(); 
   this.canvasRenderer._redraw();  
 }
 
@@ -197,17 +215,21 @@ function hasClass(element, cls) {
     return (' ' + element.className + ' ').indexOf(' ' + cls + ' ') > -1;
 }
 
-ControlsController.prototype._showConfirm = function(title, label, ok, cancel) {
+ControlsController.prototype._showConfirm = function(title, label, labelPositive, positive, labelNegative, negative) {
     this.confirmTitle.innerHTML = title;
     this.confirmText.innerHTML = label;
-    this.confirmSave.addEventListener("click", function(){
+    this.confirmSave.innerHTML = labelPositive;
+    this.confirmDiscard.innerHTML = labelNegative;
+
+    this.confirmSave.onclick = function(){
       this._hideConfirm();
-      ok();
-    }.bind(this));
-    this.confirmDiscard.addEventListener("click", function(){
+      positive();
+    }.bind(this);
+
+    this.confirmDiscard.onclick = function(){
       this._hideConfirm();
-      cancel();
-    }.bind(this));
+      negative();
+    }.bind(this);
 
     this.confirmDialog.className += " md-show";
     this.overlay.className += " md-show";  
