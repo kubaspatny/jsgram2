@@ -98,6 +98,27 @@ CanvasRenderer.prototype._getImageData = function(img) {
   return ctx.getImageData(0, 0, img.width, img.height);;
 }
 
+CanvasRenderer.prototype._saveImage = function() {
+  if(this.canvasData.length == 0){
+    return;
+  }
+
+  var img = this.canvasData[this.canvasData.length - 1];
+
+
+  var canvas = document.createElement('canvas');
+  canvas.width = img.width;
+  canvas.height = img.height;
+
+  var ctx = canvas.getContext("2d");
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img, 0,0);
+
+  canvas.toBlob(function(blob) {
+    saveAs(blob, "prettyimage.png");
+  });
+}
+
 CanvasRenderer.prototype._setTempImage = function(imageData) {
   var canvas = document.createElement('canvas');
   canvas.width = imageData.width;

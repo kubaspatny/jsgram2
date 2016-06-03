@@ -50,6 +50,10 @@ var ControlsController = function(){
     // ---------- DISCARD IMAGE CONTROLS ---------------
     discardButton = document.querySelector("#discard-button");
     discardButton.addEventListener("click", this._discardImage.bind(this));
+
+    // ---------- DISCARD IMAGE CONTROLS ---------------
+    saveButton = document.querySelector("#save-button");
+    saveButton.addEventListener("click", this._saveImage.bind(this));
 }
 
 ControlsController.prototype._onDragover = function(e){
@@ -89,6 +93,10 @@ ControlsController.prototype._setImage = function(e) {
   }.bind(this);
   
   img.src = e.target.result;
+}
+
+ControlsController.prototype._saveImage = function(){
+  this.canvasRenderer._saveImage();
 }
 
 ControlsController.prototype._discardImage = function(){
