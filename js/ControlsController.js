@@ -9,6 +9,7 @@ var ControlsController = function(){
     this.dd = document.querySelector('#dragdrop');
     this.loading = document.querySelector('#loading-wrapper');
     this.canvas = document.querySelector('#canvas-wrapper2');
+    this.cropControlsVisible = 0;
 
     // ------------- BRIGHTNESS CONTROLS ------------
     brightnessButton = document.querySelector("#brightness-button");
@@ -116,11 +117,17 @@ ControlsController.prototype._discardImage = function(){
 ControlsController.prototype._toggleCropControls = function () {
   if(this.controlsVisible == 1){
     this.promptUnsavedChanges();
-    return;
   } else {
+    this.canvasRenderer.resetCropper();
+    
     this.controlsVisible = 1;
+    this.cropControlsVisible = 1;
     this._show(this._cropControls);
+
     this.canvasRenderer._setEditMode(this.cropControlsVisible);
+    this.canvasRenderer._redraw();
+
+    this.canvasRenderer.setRenderCropper(true);
     this.canvasRenderer._redraw();
   }    
 };
@@ -148,15 +155,19 @@ ControlsController.prototype.promptUnsavedChanges = function(){
 }
 
 ControlsController.prototype.handleTempChanges = function(saveTempChanges) {
-  this.canvasRenderer._setEditMode(0);
-
   if(saveTempChanges){
-    this.canvasRenderer._saveTempChanges(); 
+    if(this.cropControlsVisible){
+      debugger;
+      this.canvasRenderer.applyCrop();
+    } 
+
+    this.canvasRenderer._saveTempChanges();
   } else {
     this.canvasRenderer._resetTempChanges();  
   }
   
   this.hideAllControls(); 
+  this.canvasRenderer._setEditMode(0);
   this.canvasRenderer._redraw();  
 }
 
@@ -164,8 +175,10 @@ ControlsController.prototype.hideAllControls = function(){
   this._hide(this._cropControls);
   this._hide(this._brightnessControls);
   this._hide(this._filtersControls);
+  this.canvasRenderer.setRenderCropper(false);
 
   this.controlsVisible = 0;
+  this.cropControlsVisible = 0;
 }
 
 ControlsController.prototype._toggleFiltersControls = function () {
