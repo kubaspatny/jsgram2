@@ -79,6 +79,17 @@ var ControlsController = function(){
     saveButton.addEventListener("click", this._saveImage.bind(this));
     mobileSaveButton = document.querySelector("#mobile-save-button");
     mobileSaveButton.addEventListener("click", this._saveImage.bind(this));
+
+    this.initAudio();
+}
+
+ControlsController.prototype.initAudio = function(){
+  this.audio = new Audio();
+  if (this.audio.canPlayType("audio/ogg")) {
+      this.audio.src = 'audio/yeah.ogg';
+  } else if (this.audio.canPlayType("audio/mpeg")) {
+      this.audio.src = 'audio/yeah.mp3';
+  }
 }
 
 ControlsController.prototype._onDragover = function(e){
@@ -126,6 +137,7 @@ ControlsController.prototype._setImage = function(e) {
 
 ControlsController.prototype._saveImage = function(){
   this.canvasRenderer._saveImage();
+  this._playYeeeeeeeaaaah();
 }
 
 ControlsController.prototype._discardImage = function(){
@@ -287,4 +299,14 @@ ControlsController.prototype._showConfirm = function(title, label, labelPositive
 ControlsController.prototype._hideConfirm = function(){
     this.confirmDialog.className = this.confirmDialog.className.replace(/(?:^|\s)md-show(?!\S)/g , '');
     this.overlay.className = this.overlay.className.replace(/(?:^|\s)md-show(?!\S)/g , '');
+}
+
+// ---------------
+
+ControlsController.prototype._playYeeeeeeeaaaah = function () {
+    if (this.audio.paused)
+       this.audio.play(); 
+    else {
+        this.audio.pause(); 
+    }
 }
