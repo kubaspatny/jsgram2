@@ -8,6 +8,8 @@ var ControlsController = function(){
     // ------------- CROP CONTROLS ------------
     cropButton = document.querySelector("#crop-button");
     cropButton.addEventListener("click", this._toggleCropControls.bind(this));
+    mobileCropButton = document.querySelector("#mobile-crop-button");
+    mobileCropButton.addEventListener("click", this._toggleCropControls.bind(this));
 
     this._cropControls = document.querySelector("#crop-controls");
     cropSave = document.querySelector("#crop-save");
@@ -18,6 +20,8 @@ var ControlsController = function(){
     // ------------- BRIGHTNESS CONTROLS ------------
     brightnessButton = document.querySelector("#brightness-button");
     brightnessButton.addEventListener("click", this._toggleBrightnessControls.bind(this));
+    mobileBrightnessButton = document.querySelector("#mobile-brightness-button");
+    mobileBrightnessButton.addEventListener("click", this._toggleBrightnessControls.bind(this));
 
     this._brightnessControls = document.querySelector("#brightness-controls");
 
@@ -46,6 +50,8 @@ var ControlsController = function(){
     // --------- FILTERS CONTROLS -------------------
     filtersButton = document.querySelector("#filters-button");
     filtersButton.addEventListener("click", this._toggleFiltersControls.bind(this));
+    mobileFiltersButton = document.querySelector("#mobile-filters-button");
+    mobileFiltersButton.addEventListener("click", this._toggleFiltersControls.bind(this));
 
     this._filtersControls = document.querySelector("#filters-controls");
 
@@ -66,10 +72,13 @@ var ControlsController = function(){
     // ---------- DISCARD IMAGE CONTROLS ---------------
     discardButton = document.querySelector("#discard-button");
     discardButton.addEventListener("click", this._discardImage.bind(this));
-
+    mobileDiscardButton = document.querySelector("#mobile-discard-button");
+    mobileDiscardButton.addEventListener("click", this._discardImage.bind(this));
     // ---------- DISCARD IMAGE CONTROLS ---------------
     saveButton = document.querySelector("#save-button");
     saveButton.addEventListener("click", this._saveImage.bind(this));
+    mobileSaveButton = document.querySelector("#mobile-save-button");
+    mobileSaveButton.addEventListener("click", this._saveImage.bind(this));
 }
 
 ControlsController.prototype._onDragover = function(e){
@@ -172,7 +181,6 @@ ControlsController.prototype.promptUnsavedChanges = function(){
 ControlsController.prototype.handleTempChanges = function(saveTempChanges) {
   if(saveTempChanges){
     if(this.cropControlsVisible){
-      debugger;
       this.canvasRenderer.applyCrop();
     } 
 
