@@ -29,6 +29,19 @@ var CanvasRenderer = function(debug){
   this.cropRatio = new RatioCrop(0, 0, 1, 1);
   this.dragging = 0;
   this.showCropper = 0;
+
+  this.initHistory();
+}
+
+CanvasRenderer.prototype.initHistory = function(){
+  window.addEventListener('popstate', function(e) {
+      var data = e.state;
+      
+      if(data != null){
+        this.controlsController.showCanvas();
+        this._setHistoryImage(data);
+      }
+  }.bind(this));
 }
 
 CanvasRenderer.prototype._setEditMode = function(editMode){
@@ -36,8 +49,12 @@ CanvasRenderer.prototype._setEditMode = function(editMode){
 }
 
 CanvasRenderer.prototype._saveTempChanges = function(){
+  debugger;
   this.canvasData.push(this.tempImage);
   this.canvasImageData.push(this.tempImageData);
+  
+  history.pushState(this.tempImageData, "Image" + this.canvasData.length, "/#" + this.canvasData.length);
+  console.log('Saving into history: image_' + this.canvasData.length);
 }
 
 CanvasRenderer.prototype._resetTempChanges = function(){
@@ -68,6 +85,8 @@ CanvasRenderer.prototype._setBaseImage = function(img) {
   this.tempImage = img;
   this.tempImageData = this.canvasImageData[0];
 
+  history.pushState(this.tempImageData, "Image" + this.canvasData.length, "/#" + this.canvasData.length);
+
   this.isLargeInstance = img.width > 2000 || img.height > 2000;
   this._redraw();
 }
@@ -82,13 +101,13 @@ CanvasRenderer.prototype._discardImage = function() {
 
 CanvasRenderer.prototype._redraw = function(){
     var canvasDataLen = this.canvasData.length;
-    console.log('currently items in history: ' +  canvasDataLen);
+    //console.log('currently items in history: ' +  canvasDataLen);
 
     if(this.isEditMode && this.tempImage != null){
-      console.log('_redraw - in edit mode');
+      //console.log('_redraw - in edit mode');
       this._drawImage(this.tempImage);
     } else if(canvasDataLen > 0){
-      console.log('_redraw - in normal mode');
+      //console.log('_redraw - in normal mode');
       this._drawImage(this.canvasData[canvasDataLen - 1]);
     }
 }
@@ -149,8 +168,6 @@ CanvasRenderer.prototype._setCropper = function(){
 
 CanvasRenderer.prototype.onMouseInteraction = function(e, res) {
   e.preventDefault();
-
-  console.log('onMouseInteraction: ' + res);
 
   if (res == 'down') {
       currX = e.clientX - this.canvas.offsetLeft;
@@ -339,6 +356,23 @@ CanvasRenderer.prototype._setTempImage = function(imageData) {
   this.tempImage.src = canvas.toDataURL();
 
   this.tempImageData = imageData;
+}
+
+CanvasRenderer.prototype._setHistoryImage = function(imageData) {
+  var canvas = document.createElement('canvas');
+  canvas.width = imageData.width;
+  canvas.height = imageData.height;
+
+  var ctx = canvas.getContext("2d");
+  ctx.putImageData(imageData, 0, 0);
+  this.tempImage = new Image();
+  this.tempImage.src = canvas.toDataURL();
+  this.tempImageData = imageData;
+
+  this.canvasData = [this.tempImage];
+  this.canvasImageData = [this.tempImageData];
+
+  this._redraw();
 }
 
 CanvasRenderer.prototype._drawImageData = function(imageData){
@@ -602,6 +636,10 @@ CanvasRenderer.prototype.hideProgress = function(){
   }
 }
 
+CanvasRenderer.prototype.setControlsController = function(controller){
+  this.controlsController = controller;
+}
+
 var CropperHandle = function(x, y){
   this.x = x;
   this.y = y;
@@ -617,4 +655,9 @@ var RatioCrop = function(left, top, right, bottom){
   this.top = top;
   this.right = right;
   this.bottom = bottom;
+}
+
+var HistoryImageHolder = function(image, imageData){
+  this.image = image;
+  this.imageData = imageData;
 }

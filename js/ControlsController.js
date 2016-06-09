@@ -108,12 +108,16 @@ ControlsController.prototype._readImage = function(file) {
   }
 }
 
-ControlsController.prototype._setImage = function(e) {
-  var img = new Image();
-  img.onload = function () {
+ControlsController.prototype.showCanvas = function(){
     this._hide(this.dd);
     this._hide(this.loading);
     this._show(this.canvas);
+}
+
+ControlsController.prototype._setImage = function(e) {
+  var img = new Image();
+  img.onload = function () {
+    this.showCanvas();
     this.canvasRenderer._setBaseImage(img);
   }.bind(this);
   
@@ -179,12 +183,13 @@ ControlsController.prototype.promptUnsavedChanges = function(){
 }
 
 ControlsController.prototype.handleTempChanges = function(saveTempChanges) {
+
   if(saveTempChanges){
     if(this.cropControlsVisible){
       this.canvasRenderer.applyCrop();
-    } 
-
-    this.canvasRenderer._saveTempChanges();
+    } else {
+      this.canvasRenderer._saveTempChanges();  
+    }
   } else {
     this.canvasRenderer._resetTempChanges();  
   }

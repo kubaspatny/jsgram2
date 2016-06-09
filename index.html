@@ -55,24 +55,24 @@
     <header>
       <nav class="blue-grey darken-4">
         <div class="nav-wrapper">
-          <a href="#" id="logo" class="brand-logo">JSGram</a>
-          <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+          <a id="logo" class="brand-logo">JSGram</a>
+          <a data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
           <ul id="nav-mobile" class="right hide-on-med-and-down">
-            <li><a href="#" id="crop-button" class="tooltipped" data-tooltip="Crop"><i class="material-icons">crop</i></a></li>
-            <li><a href="#" id="brightness-button" class="tooltipped" data-tooltip="Brightness and Contrast"><i class="material-icons">brightness_medium</i></a></li>
-            <li><a href="#" id="filters-button" class="tooltipped" data-tooltip="Filters"><i class="material-icons">filter_hdr</i></a></li>
+            <li><a id="crop-button" class="tooltipped" data-tooltip="Crop"><i class="material-icons">crop</i></a></li>
+            <li><a id="brightness-button" class="tooltipped" data-tooltip="Brightness and Contrast"><i class="material-icons">brightness_medium</i></a></li>
+            <li><a id="filters-button" class="tooltipped" data-tooltip="Filters"><i class="material-icons">filter_hdr</i></a></li>
             
-            <li><a href="#" id="save-button" class="tooltipped" data-tooltip="Save"><i class="material-icons">save</i></a></li>
-            <li><a href="#" id="discard-button" class="tooltipped" data-tooltip="Discard"><i class="material-icons">delete</i></a></li>
+            <li><a id="save-button" class="tooltipped" data-tooltip="Save"><i class="material-icons">save</i></a></li>
+            <li><a id="discard-button" class="tooltipped" data-tooltip="Discard"><i class="material-icons">delete</i></a></li>
           </ul>
 
           <ul class="side-nav" id="mobile-demo">
-            <li><a id="mobile-crop-button" href="#"><i class="material-icons left">crop</i>Crop</a></li>
-            <li><a id="mobile-brightness-button" href="#"><i class="material-icons left">brightness_medium</i>Brightness</a></li>
-            <li><a id="mobile-filters-button" href="#"><i class="material-icons left">filter_hdr</i>Filters</a></li>
+            <li><a id="mobile-crop-button" ><i class="material-icons left">crop</i>Crop</a></li>
+            <li><a id="mobile-brightness-button" ><i class="material-icons left">brightness_medium</i>Brightness</a></li>
+            <li><a id="mobile-filters-button" ><i class="material-icons left">filter_hdr</i>Filters</a></li>
             
-            <li><a id="mobile-save-button" href="#"><i class="material-icons left">save</i>Save</a></li>
-            <li><a id="mobile-discard-button" href="#"><i class="material-icons left">delete</i>Discard</a></li>
+            <li><a id="mobile-save-button" ><i class="material-icons left">save</i>Save</a></li>
+            <li><a id="mobile-discard-button" ><i class="material-icons left">delete</i>Discard</a></li>
           </ul>
         </div>
       </nav>
@@ -143,6 +143,7 @@
       var renderer = new CanvasRenderer(false);
       var controls = new ControlsController();
       controls._setOnCanvasRenderer(renderer);
+      renderer.setControlsController(controls);
     </script>
 	</body>
 </html>
