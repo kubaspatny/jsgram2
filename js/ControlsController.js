@@ -81,6 +81,18 @@ var ControlsController = function(){
     mobileSaveButton.addEventListener("click", this._saveImage.bind(this));
 
     this.initAudio();
+
+    window.addEventListener("offline", this.onOffline.bind(this));
+    window.addEventListener("online", this.onOnline.bind(this));
+    this.offlineMode = document.querySelector('#offline-mode');
+}
+
+ControlsController.prototype.onOffline = function(){
+  this._show(this.offlineMode);
+}
+
+ControlsController.prototype.onOnline = function(){
+  this._hide(this.offlineMode);
 }
 
 ControlsController.prototype.initAudio = function(){
