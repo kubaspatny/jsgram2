@@ -1,15 +1,19 @@
 var ControlsController = function(){
     this.controlsVisible = 0;
+    this.dd = document.querySelector('#dragdrop');
+    this.loading = document.querySelector('#loading-wrapper');
+    this.canvas = document.querySelector('#canvas-wrapper2');
+    this.cropControlsVisible = 0;
 
     // ------------- CROP CONTROLS ------------
     cropButton = document.querySelector("#crop-button");
     cropButton.addEventListener("click", this._toggleCropControls.bind(this));
 
     this._cropControls = document.querySelector("#crop-controls");
-    this.dd = document.querySelector('#dragdrop');
-    this.loading = document.querySelector('#loading-wrapper');
-    this.canvas = document.querySelector('#canvas-wrapper2');
-    this.cropControlsVisible = 0;
+    cropSave = document.querySelector("#crop-save");
+    cropSave.addEventListener('click', this.handleTempChanges.bind(this, true));
+    cropDiscard = document.querySelector("#crop-discard");
+    cropDiscard.addEventListener('click', this.handleTempChanges.bind(this, false));
 
     // ------------- BRIGHTNESS CONTROLS ------------
     brightnessButton = document.querySelector("#brightness-button");
@@ -26,6 +30,12 @@ var ControlsController = function(){
     this.dd.addEventListener("drop", this._onDrop.bind(this));
     this.dd.addEventListener("dragover", this._onDragover.bind(this));
 
+    bcSave = document.querySelector('#bc-save');
+    bcSave.addEventListener('click', this.handleTempChanges.bind(this, true));
+    bcDiscard = document.querySelector('#bc-discard');
+    bcDiscard.addEventListener('click', this.handleTempChanges.bind(this, false));
+
+    // ------------ DIALOG ---------------------------
     this.confirmDialog = document.querySelector('#confirmDialog');
     this.confirmTitle = document.querySelector('#confirmTitle');
     this.confirmText = document.querySelector('#confirmText');
@@ -47,6 +57,11 @@ var ControlsController = function(){
 
     filterSolarize = document.querySelector("#filter-solarize");
     filterSolarize.addEventListener("click", this._applyFilter.bind(this, Filters.Solarize));
+
+    filtersSave = document.querySelector('#filters-save');
+    filtersSave.addEventListener('click', this.handleTempChanges.bind(this, true));
+    filtersDiscard = document.querySelector('#filters-discard');
+    filtersDiscard.addEventListener('click', this.handleTempChanges.bind(this, false));
 
     // ---------- DISCARD IMAGE CONTROLS ---------------
     discardButton = document.querySelector("#discard-button");
@@ -119,7 +134,7 @@ ControlsController.prototype._toggleCropControls = function () {
     this.promptUnsavedChanges();
   } else {
     this.canvasRenderer.resetCropper();
-    
+
     this.controlsVisible = 1;
     this.cropControlsVisible = 1;
     this._show(this._cropControls);
