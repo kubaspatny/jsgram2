@@ -171,3 +171,7 @@ footer ~ .brightness-controls > table tr,td {
       font-size: 3rem;
     }
 }
+
+#offline-mode {
+  background-color: #e53935;
+}
