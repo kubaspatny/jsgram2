@@ -70,6 +70,22 @@
       </div>
     </div>
 
+    <div class="md-modal" id="infoAbout">
+      <div class="md-content">
+        <h4 class="modal-title">Hello!</h4>
+        <div class="modal-text">
+          <p itemscope itemtype="http://data-vocabulary.org/Person"> 
+            Welcome to this amazing page. It was created by <span itemprop="name">Kuba Spatny</span>.<br/><br/>Do you want to know anything more about me? I guess you have no choice, because I am going to tell you anyways. I am an <span itemprop="role">Android developer</span> at <span itemprop="affiliation">Seznam.cz</span>. I love photography and books. Aaaand that's about it.
+        </p>
+            
+        </div>
+        <div class="controls-wrapper">
+          <button id="aboutDiscard" class="btn-flat">I don't really care</button>
+          <button id="aboutSave" class="btn-flat">OK</button>
+        </div>
+      </div>
+    </div>
+
     <div class="md-modal" id="loadingDialog">
       <div class="md-content">
         <h4>Processing Image</h4>
@@ -92,6 +108,12 @@
           <a id="logo" class="brand-logo">JSGram</a>
 
           <a data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+
+          <ul id="about-nav" class="right hide-on-med-and-down">
+            <div class="divider"></div>
+            <li><a id="about-button" class="right tooltipped" data-tooltip="About me"><i class="material-icons">person</i></a></li>
+          </ul>
+
           <ul id="nav-mobile" class="right hide-on-med-and-down">
             <li><a id="offline-mode" style="display: none;">Offline mode</li>
             <li><a id="crop-button" class="tooltipped" data-tooltip="Crop"><i class="material-icons">crop</i></a></li>
@@ -100,16 +122,18 @@
             
             <li><a id="save-button" class="tooltipped" data-tooltip="Save"><i class="material-icons">save</i></a></li>
             <li><a id="discard-button" class="tooltipped" data-tooltip="Discard"><i class="material-icons">delete</i></a></li>
-
           </ul>
 
           <ul class="side-nav" id="mobile-demo">
-            <li><a id="mobile-crop-button" ><i class="material-icons left">crop</i>Crop</a></li>
-            <li><a id="mobile-brightness-button" ><i class="material-icons left">brightness_medium</i>Brightness</a></li>
-            <li><a id="mobile-filters-button" ><i class="material-icons left">filter_hdr</i>Filters</a></li>
-            
-            <li><a id="mobile-save-button" ><i class="material-icons left">save</i>Save</a></li>
-            <li><a id="mobile-discard-button" ><i class="material-icons left">delete</i>Discard</a></li>
+            <div id="nav-side-wrapper">
+              <li><a id="mobile-crop-button" ><i class="material-icons left">crop</i>Crop</a></li>
+              <li><a id="mobile-brightness-button" ><i class="material-icons left">brightness_medium</i>Brightness</a></li>
+              <li><a id="mobile-filters-button" ><i class="material-icons left">filter_hdr</i>Filters</a></li>
+              
+              <li><a id="mobile-save-button" ><i class="material-icons left">save</i>Save</a></li>
+              <li><a id="mobile-discard-button" ><i class="material-icons left">delete</i>Discard</a></li>
+            </div>
+            <li><a id="mobile-about-button" ><i class="material-icons left">person</i>About me</a></li>
           </ul>
         </div>
       </nav>

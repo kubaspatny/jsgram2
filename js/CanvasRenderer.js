@@ -564,7 +564,7 @@ CanvasRenderer.prototype.applyBrightnessContrast = function(brigtness, contrast)
   this.showProgress();
 
   setTimeout(function(){
-    var imageData = this.canvasImageData[this.canvasImageData.length - 1];
+    var imageData = this.canvasImageData[this.currentHistoryItem - 1];
     imageDataCopy = Filters.BrightnessContrast(imageData, this.copyImageData(imageData), brigtness, contrast);
     this._setTempImage(imageDataCopy);
     this._redraw();

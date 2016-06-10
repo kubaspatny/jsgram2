@@ -32,10 +32,14 @@ canvas {
   justify-content: center;
 }
 
-#dragdrop p {
+#dragdrop > p {
   font-family: "Roboto";
   font-weight: 300;
-  font-size: 2rem;
+
+  -webkit-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
+  -ms-transition: all 0.3s ease;
 }
 
 nav .button-collapse {
@@ -70,6 +74,18 @@ nav .button-collapse {
 footer ~ .brightness-controls > table tr,td {
   padding: 2px 10px;
   text-align: center;
+}
+
+.md-modal > .md-content p span {
+  font-weight: 500;
+}
+
+.md-modal > .md-content p span:hover {
+  color: #303c42;
+}
+
+.md-modal > .md-content > .modal-title ~ .modal-text p {
+  font-weight: 100;
 }
 
 #loading-wrapper {
@@ -128,4 +144,30 @@ footer ~ .brightness-controls > table tr,td {
     -webkit-transform: scale(1.0);
     transform: scale(1.0);
   }
+}
+
+.divider {
+  width: 1px;
+  height: 64px;
+  float:left;
+  background-color: #303c42;
+}
+
+@media (max-width: 767px) {
+    #dragdrop > p {
+      font-size: 1rem;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+
+    #dragdrop > p {
+      font-size: 2rem;
+    }
+}
+
+@media (min-width: 1025px) {
+    #dragdrop > p {
+      font-size: 3rem;
+    }
 }

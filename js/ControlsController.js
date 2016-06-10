@@ -5,7 +5,7 @@ var ControlsController = function(){
     this.canvas = document.querySelector('#canvas-wrapper2');
 
     this.navigation = document.querySelector('#nav-mobile');
-    this.navigationMobile = document.querySelector('#mobile-demo');
+    this.navigationMobile = document.querySelector('#nav-side-wrapper');
 
     this.cropControlsVisible = 0;
 
@@ -50,6 +50,10 @@ var ControlsController = function(){
     this.confirmDiscard = document.querySelector('#confirmDiscard');
     this.confirmSave = document.querySelector('#confirmSave');
     this.overlay = document.querySelector('#dialogOverlay');
+
+    this.aboutDialog = document.querySelector('#infoAbout');
+    this.aboutSave = document.querySelector('#aboutSave');
+    this.aboutDiscard = document.querySelector('#aboutDiscard');
 
     // --------- FILTERS CONTROLS -------------------
     filtersButton = document.querySelector("#filters-button");
@@ -96,6 +100,17 @@ var ControlsController = function(){
     if(!window.navigator.onLine){
       this.onOffline();
     }
+
+    // ------------ ABOUT -----------------------------
+    aboutButton = document.querySelector("#about-button");
+    aboutButton.addEventListener("click", function(){
+      this._showAbout();
+    }.bind(this));
+
+    aboutButtonMobile = document.querySelector("#mobile-about-button");
+    aboutButtonMobile.addEventListener("click", function(){
+      this._showAbout();
+    }.bind(this));
 }
 
 ControlsController.prototype.onOffline = function(){
@@ -332,6 +347,24 @@ ControlsController.prototype._showConfirm = function(title, label, labelPositive
 
 ControlsController.prototype._hideConfirm = function(){
     this.confirmDialog.className = this.confirmDialog.className.replace(/(?:^|\s)md-show(?!\S)/g , '');
+    this.overlay.className = this.overlay.className.replace(/(?:^|\s)md-show(?!\S)/g , '');
+}
+
+ControlsController.prototype._showAbout = function() {
+    this.aboutSave.onclick = function(){
+      this._hideAbout();
+    }.bind(this);
+
+    this.aboutDiscard.onclick = function(){
+      this._hideAbout();
+    }.bind(this);
+
+    this.aboutDialog.className += " md-show";
+    this.overlay.className += " md-show";  
+}
+
+ControlsController.prototype._hideAbout = function(){
+    this.aboutDialog.className = this.aboutDialog.className.replace(/(?:^|\s)md-show(?!\S)/g , '');
     this.overlay.className = this.overlay.className.replace(/(?:^|\s)md-show(?!\S)/g , '');
 }
 
