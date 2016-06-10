@@ -1,11 +1,13 @@
 CACHE MANIFEST
-# 2016-06-10 21:53
+# 2016-06-11 00:01
 
 CACHE:
 index.html
 
 audio/yeah.mp3
 audio/yeah.ogg
+audio/trololo.mp3
+audio/trololo.ogg
 
 css/dialog.css
 css/header.css
