@@ -29,6 +29,7 @@ var CanvasRenderer = function(debug){
   this.cropRatio = new RatioCrop(0, 0, 1, 1);
   this.dragging = 0;
   this.showCropper = 0;
+  this.currentHistoryItem = 0;
 
   this.initHistory();
 }
@@ -38,7 +39,6 @@ CanvasRenderer.prototype.initHistory = function(){
       var data = e.state;
       
       if(data != null){
-        this.controlsController.showCanvas();
         this._setHistoryImage(data);
       }
   }.bind(this));
@@ -49,17 +49,27 @@ CanvasRenderer.prototype._setEditMode = function(editMode){
 }
 
 CanvasRenderer.prototype._saveTempChanges = function(){
-  debugger;
+
+  // we have some stuff from THE FUTURE - get rid of it
+  if(this.currentHistoryItem > this.canvasData.length){
+    while(this.canvasData.length != this.currentHistoryItem){
+      this.canvasData.pop();
+      this.canvasImageData.pop();
+    }
+  }
+
   this.canvasData.push(this.tempImage);
   this.canvasImageData.push(this.tempImageData);
+
+  this.currentHistoryItem = this.canvasData.length;
   
-  history.pushState(this.tempImageData, "Image" + this.canvasData.length, "/#" + this.canvasData.length);
-  console.log('Saving into history: image_' + this.canvasData.length);
+  history.pushState(this.currentHistoryItem, "image_" + this.currentHistoryItem, "/#" + this.currentHistoryItem);
+  console.log('Saving into history: image_' + this.currentHistoryItem);
 }
 
 CanvasRenderer.prototype._resetTempChanges = function(){
-  this.tempImage = this.canvasData[this.canvasData.length - 1];
-  this.tempImageData = this.canvasImageData[this.canvasImageData.length - 1];  
+  this.tempImage = this.canvasData[this.currentHistoryItem - 1];
+  this.tempImageData = this.canvasImageData[this.currentHistoryItem - 1];  
 }
 
 CanvasRenderer.prototype._onResize = function(){
@@ -84,8 +94,9 @@ CanvasRenderer.prototype._setBaseImage = function(img) {
   this.canvasImageData = [this._getImageData(img)];
   this.tempImage = img;
   this.tempImageData = this.canvasImageData[0];
+  this.currentHistoryItem = 1;
 
-  history.pushState(this.tempImageData, "Image" + this.canvasData.length, "/#" + this.canvasData.length);
+  history.pushState(this.currentHistoryItem, "image_" + this.currentHistoryItem, "/#" + this.currentHistoryItem);
 
   this.isLargeInstance = img.width > 2000 || img.height > 2000;
   this._redraw();
@@ -97,6 +108,7 @@ CanvasRenderer.prototype._discardImage = function() {
   this.tempImage = null;
   this.tempImageData = null;
   this.isEditMode = 0;
+  this.currentHistoryItem = 0;
 }
 
 CanvasRenderer.prototype._redraw = function(){
@@ -105,7 +117,7 @@ CanvasRenderer.prototype._redraw = function(){
     if(this.isEditMode && this.tempImage != null){
       this._drawImage(this.tempImage);
     } else if(canvasDataLen > 0){
-      this._drawImage(this.canvasData[canvasDataLen - 1]);
+      this._drawImage(this.canvasData[this.currentHistoryItem - 1]);
     }
 
     // vicemene jen kvuli firefoxu, protoze tam se proste
@@ -359,21 +371,20 @@ CanvasRenderer.prototype._setTempImage = function(imageData) {
   this.tempImageData = imageData;
 }
 
-CanvasRenderer.prototype._setHistoryImage = function(imageData) {
-  var canvas = document.createElement('canvas');
-  canvas.width = imageData.width;
-  canvas.height = imageData.height;
+CanvasRenderer.prototype._setHistoryImage = function(index) {
+  if(index > this.canvasData.length){
+    index = this.canvasData.length;
+  }
 
-  var ctx = canvas.getContext("2d");
-  ctx.putImageData(imageData, 0, 0);
-  this.tempImage = new Image();
-  this.tempImage.src = canvas.toDataURL();
-  this.tempImageData = imageData;
+  this.currentHistoryItem = index;
 
-  this.canvasData = [this.tempImage];
-  this.canvasImageData = [this.tempImageData];
+  if(this.currentHistoryItem > 0){
+    this.tempImageData = this.canvasImageData[this.currentHistoryItem - 1];
+    this.tempImage = this.canvasData[this.currentHistoryItem - 1];
 
-  this._redraw();
+    this.controlsController.showCanvas();
+    this._redraw();  
+  }
 }
 
 CanvasRenderer.prototype._drawImageData = function(imageData){
