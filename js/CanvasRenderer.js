@@ -112,17 +112,25 @@ CanvasRenderer.prototype._discardImage = function() {
 }
 
 CanvasRenderer.prototype._redraw = function(){
-    var canvasDataLen = this.canvasData.length;
+    this.drawCount = 0;
+    this._renderImage();
+}
 
-    if(this.isEditMode && this.tempImage != null){
-      this._drawImage(this.tempImage);
-    } else if(canvasDataLen > 0){
-      this._drawImage(this.canvasData[this.currentHistoryItem - 1]);
-    }
+CanvasRenderer.prototype._renderImage = function(){
+  var canvasDataLen = this.currentHistoryItem;
 
+  if(this.isEditMode && this.tempImage != null){
+    this._drawImage(this.tempImage);
+  } else if(canvasDataLen > 0){
+    this._drawImage(this.canvasData[this.currentHistoryItem - 1]);
+  }
+
+  if(this.drawCount < 15){
+    this.drawCount++;
     // vicemene jen kvuli firefoxu, protoze tam se proste
     // nekdy canvas spravne nevykreslil...
-    window.requestAnimationFrame(this._redraw.bind(this));
+    window.requestAnimationFrame(this._renderImage.bind(this));  
+  }
 }
 
 CanvasRenderer.prototype._getImageData = function(img) {
@@ -138,11 +146,11 @@ CanvasRenderer.prototype._getImageData = function(img) {
 }
 
 CanvasRenderer.prototype._saveImage = function() {
-  if(this.canvasData.length == 0){
+  if(this.currentHistoryItem == 0){
     return;
   }
 
-  var img = this.canvasData[this.canvasData.length - 1];
+  var img = this.canvasData[this.currentHistoryItem - 1];
 
 
   var canvas = document.createElement('canvas');
@@ -159,7 +167,6 @@ CanvasRenderer.prototype._saveImage = function() {
 }
 
 CanvasRenderer.prototype._setCropper = function(){
-  console.log('setCropper');
   var canvas = document.querySelector('canvas');
 
   canvas.addEventListener("mousemove", function (e) {
@@ -597,7 +604,7 @@ CanvasRenderer.prototype.applyFilter = function(func){
   this.showProgress();
 
   setTimeout(function(){
-    var imageData = this.canvasImageData[this.canvasImageData.length - 1];
+    var imageData = this.canvasImageData[this.currentHistoryItem - 1];
     imageDataCopy = func(imageData, this.copyImageData(imageData));
     this._setTempImage(imageDataCopy);
     this._redraw(); 
