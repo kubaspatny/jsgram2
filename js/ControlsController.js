@@ -5,7 +5,11 @@ var ControlsController = function(){
     this.canvas = document.querySelector('#canvas-wrapper2');
 
     this.navigation = document.querySelector('#nav-mobile');
-    this.navigationMobile = document.querySelector('#nav-side-wrapper');
+    this.navigationMobileCrop = document.querySelector('#mobile-crop-button');
+    this.navigationMobileBrightness = document.querySelector('#mobile-brightness-button');
+    this.navigationMobileFilters = document.querySelector('#mobile-filters-button');
+    this.navigationMobileSave = document.querySelector('#mobile-save-button');
+    this.navigationMobileDiscard = document.querySelector('#mobile-discard-button');
 
     this.cropControlsVisible = 0;
 
@@ -162,7 +166,11 @@ ControlsController.prototype.showCanvas = function(){
     this._hide(this.loading);
     this._show(this.canvas);
     this._show(this.navigation);
-    this._show(this.navigationMobile);
+    this._show(this.navigationMobileCrop);
+    this._show(this.navigationMobileBrightness);
+    this._show(this.navigationMobileFilters);
+    this._show(this.navigationMobileSave);
+    this._show(this.navigationMobileDiscard);
 }
 
 ControlsController.prototype.hideCanvas = function(){
@@ -170,7 +178,11 @@ ControlsController.prototype.hideCanvas = function(){
     this._hide(this.canvas);
     this.hideAllControls();
     this._hide(this.navigation);
-    this._hide(this.navigationMobile);
+    this._hide(this.navigationMobileCrop);
+    this._hide(this.navigationMobileBrightness);
+    this._hide(this.navigationMobileFilters);
+    this._hide(this.navigationMobileSave);
+    this._hide(this.navigationMobileDiscard);
 }
 
 ControlsController.prototype._setImage = function(e) {
@@ -299,7 +311,11 @@ ControlsController.prototype._setOnCanvasRenderer = function (listener) {
   this.canvasRenderer = listener;
 
   this._hide(this.navigation);
-  this._hide(this.navigationMobile);
+  this._hide(this.navigationMobileCrop);
+  this._hide(this.navigationMobileBrightness);
+  this._hide(this.navigationMobileFilters);
+  this._hide(this.navigationMobileSave);
+  this._hide(this.navigationMobileDiscard);
 };
 
 ControlsController.prototype._show = function(element){
