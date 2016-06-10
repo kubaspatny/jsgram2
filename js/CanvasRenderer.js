@@ -390,6 +390,7 @@ CanvasRenderer.prototype._setHistoryImage = function(index) {
     this.tempImage = this.canvasData[this.currentHistoryItem - 1];
 
     this.controlsController.showCanvas();
+    this.controlsController.hideAllControls();
     this._redraw();  
   }
 }

@@ -3,6 +3,10 @@ var ControlsController = function(){
     this.dd = document.querySelector('#dragdrop');
     this.loading = document.querySelector('#loading-wrapper');
     this.canvas = document.querySelector('#canvas-wrapper2');
+
+    this.navigation = document.querySelector('#nav-mobile');
+    this.navigationMobile = document.querySelector('#mobile-demo');
+
     this.cropControlsVisible = 0;
 
     // ------------- CROP CONTROLS ------------
@@ -142,6 +146,16 @@ ControlsController.prototype.showCanvas = function(){
     this._hide(this.dd);
     this._hide(this.loading);
     this._show(this.canvas);
+    this._show(this.navigation);
+    this._show(this.navigationMobile);
+}
+
+ControlsController.prototype.hideCanvas = function(){
+    this._show(this.dd);
+    this._hide(this.canvas);
+    this.hideAllControls();
+    this._hide(this.navigation);
+    this._hide(this.navigationMobile);
 }
 
 ControlsController.prototype._setImage = function(e) {
@@ -165,9 +179,7 @@ ControlsController.prototype._discardImage = function(){
                     'Discard',
                     function () {
                       this.canvasRenderer._discardImage();
-                      this._show(this.dd);
-                      this._hide(this.canvas);
-                      this.hideAllControls();
+                      this.hideCanvas();
                     }.bind(this),
                     'Cancel',
                     function() {}.bind(this));
@@ -270,6 +282,9 @@ ControlsController.prototype._applyOil = function(){
 
 ControlsController.prototype._setOnCanvasRenderer = function (listener) {
   this.canvasRenderer = listener;
+
+  this._hide(this.navigation);
+  this._hide(this.navigationMobile);
 };
 
 ControlsController.prototype._show = function(element){
