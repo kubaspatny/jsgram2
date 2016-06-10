@@ -101,15 +101,16 @@ CanvasRenderer.prototype._discardImage = function() {
 
 CanvasRenderer.prototype._redraw = function(){
     var canvasDataLen = this.canvasData.length;
-    //console.log('currently items in history: ' +  canvasDataLen);
 
     if(this.isEditMode && this.tempImage != null){
-      //console.log('_redraw - in edit mode');
       this._drawImage(this.tempImage);
     } else if(canvasDataLen > 0){
-      //console.log('_redraw - in normal mode');
       this._drawImage(this.canvasData[canvasDataLen - 1]);
     }
+
+    // vicemene jen kvuli firefoxu, protoze tam se proste
+    // nekdy canvas spravne nevykreslil...
+    window.requestAnimationFrame(this._redraw.bind(this));
 }
 
 CanvasRenderer.prototype._getImageData = function(img) {
