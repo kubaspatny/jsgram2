@@ -82,9 +82,16 @@ var ControlsController = function(){
 
     this.initAudio();
 
+    // ----------- OFFLINE MODE ------------------------
+    this.offlineMode = document.querySelector('#offline-mode');
     window.addEventListener("offline", this.onOffline.bind(this));
     window.addEventListener("online", this.onOnline.bind(this));
-    this.offlineMode = document.querySelector('#offline-mode');
+
+    // if the page was loaded from cache offline, then offline
+    // event won't be triggered, so check it up front
+    if(!window.navigator.onLine){
+      this.onOffline();
+    }
 }
 
 ControlsController.prototype.onOffline = function(){
