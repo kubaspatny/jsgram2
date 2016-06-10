@@ -145,13 +145,12 @@ CanvasRenderer.prototype._getImageData = function(img) {
   return ctx.getImageData(0, 0, img.width, img.height);
 }
 
-CanvasRenderer.prototype._saveImage = function() {
+CanvasRenderer.prototype._saveImage = function(imagename) {
   if(this.currentHistoryItem == 0){
     return;
   }
 
   var img = this.canvasData[this.currentHistoryItem - 1];
-
 
   var canvas = document.createElement('canvas');
   canvas.width = img.width;
@@ -162,7 +161,7 @@ CanvasRenderer.prototype._saveImage = function() {
   ctx.drawImage(img, 0,0);
 
   canvas.toBlob(function(blob) {
-    saveAs(blob, "jsgram_image.png");
+    saveAs(blob, imagename + ".png");
   });
 }
 

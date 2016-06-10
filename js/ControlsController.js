@@ -59,6 +59,13 @@ var ControlsController = function(){
     this.aboutSave = document.querySelector('#aboutSave');
     this.aboutDiscard = document.querySelector('#aboutDiscard');
 
+    this.downloadDialog = document.querySelector('#downloadDialog');
+    this.downloadFileName = document.querySelector('#file_name');
+    this.downloadSave = document.querySelector('#downloadSave');
+    this.downloadDiscard = document.querySelector('#downloadDiscard');
+    this.downloadForm = document.querySelector('#download-form');
+    this.downloadForm.addEventListener("submit", this.onDownload.bind(this));
+
     // --------- FILTERS CONTROLS -------------------
     filtersButton = document.querySelector("#filters-button");
     filtersButton.addEventListener("click", this._toggleFiltersControls.bind(this));
@@ -196,7 +203,14 @@ ControlsController.prototype._setImage = function(e) {
 }
 
 ControlsController.prototype._saveImage = function(){
-  this.canvasRenderer._saveImage();
+  this._showDownload();
+}
+
+ControlsController.prototype.onDownload = function(e){
+  e.preventDefault();
+
+  this._hideDownload();
+  this.canvasRenderer._saveImage(this.downloadFileName.value);
   this._playYeeeeeeeaaaah();
 }
 
@@ -381,6 +395,30 @@ ControlsController.prototype._showAbout = function() {
 
 ControlsController.prototype._hideAbout = function(){
     this.aboutDialog.className = this.aboutDialog.className.replace(/(?:^|\s)md-show(?!\S)/g , '');
+    this.overlay.className = this.overlay.className.replace(/(?:^|\s)md-show(?!\S)/g , '');
+}
+
+ControlsController.prototype._showDownload = function() {
+    this.downloadSave.onclick = function(){
+      // calling form.submit() doesn't trigger onSubmit event
+      // so create a button in the form, click it and remove it
+      var button = this.downloadForm.ownerDocument.createElement('input');
+      button.style.display = 'none'; 
+      button.type = 'submit';
+      this.downloadForm.appendChild(button).click();
+      this.downloadForm.removeChild(button);
+    }.bind(this);
+
+    this.downloadDiscard.onclick = function(){
+      this._hideDownload();
+    }.bind(this);
+
+    this.downloadDialog.className += " md-show";
+    this.overlay.className += " md-show";  
+}
+
+ControlsController.prototype._hideDownload = function(){
+    this.downloadDialog.className = this.downloadDialog.className.replace(/(?:^|\s)md-show(?!\S)/g , '');
     this.overlay.className = this.overlay.className.replace(/(?:^|\s)md-show(?!\S)/g , '');
 }
 

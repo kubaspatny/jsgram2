@@ -5485,21 +5485,21 @@ label {
    ========================================================================== */
 /* Style Placeholders */
 ::-webkit-input-placeholder {
-  color: #d1d1d1;
+  color: rgba(255, 255, 255, 0.5);
 }
 
 :-moz-placeholder {
   /* Firefox 18- */
-  color: #d1d1d1;
+  color: rgba(255, 255, 255, 0.5);
 }
 
 ::-moz-placeholder {
   /* Firefox 19+ */
-  color: #d1d1d1;
+  color: rgba(255, 255, 255, 0.5);
 }
 
 :-ms-input-placeholder {
-  color: #d1d1d1;
+  color: rgba(255, 255, 255, 0.5);
 }
 
 /* Text inputs */
@@ -5517,8 +5517,9 @@ input[type=number],
 input[type=search],
 textarea.materialize-textarea {
   background-color: transparent;
+  color: rgba(0, 0, 0, 0.8);
   border: none;
-  border-bottom: 1px solid #9e9e9e;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.6);
   border-radius: 0;
   outline: none;
   height: 3rem;
@@ -5602,8 +5603,8 @@ input[type=tel]:focus:not([readonly]),
 input[type=number]:focus:not([readonly]),
 input[type=search]:focus:not([readonly]),
 textarea.materialize-textarea:focus:not([readonly]) {
-  border-bottom: 1px solid #26a69a;
-  box-shadow: 0 1px 0 0 #26a69a;
+  border-bottom: 1px solid #ffffff;
+  box-shadow: 0 1px 0 0 #ffffff;
 }
 
 input:not([type]):focus:not([readonly]) + label,
@@ -5619,7 +5620,7 @@ input[type=tel]:focus:not([readonly]) + label,
 input[type=number]:focus:not([readonly]) + label,
 input[type=search]:focus:not([readonly]) + label,
 textarea.materialize-textarea:focus:not([readonly]) + label {
-  color: #26a69a;
+  color: #ffffff;
 }
 
 input:not([type]).valid, input:not([type]):focus.valid,
@@ -5786,10 +5787,10 @@ textarea.materialize-textarea + label:after {
 }
 
 .input-field label {
-  color: #9e9e9e;
+  color: rgba(0, 0, 0, 0.6);
   position: absolute;
   top: 0.8rem;
-  left: 0.75rem;
+  left: 0;
   font-size: 1rem;
   cursor: text;
   transition: .2s ease-out;

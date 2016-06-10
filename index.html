@@ -96,6 +96,25 @@
       </div>
     </div>
 
+    <div class="md-modal" id="downloadDialog">
+      <div class="md-content">
+        <h4 class="modal-title">Download Image</h4>
+        <div class="modal-text">
+          <form id="download-form">
+            <div class="input-field">
+              <input placeholder="Write the file name" id="file_name" type="text" class="validate" required autocomplete="off" autofocus pattern="[a-z]{1,15}">
+              <label for="file_name">File name (only lowercase letters allowed)</label>     
+            </div>
+          </form>        
+        </div>
+
+        <div class="controls-wrapper">
+          <button id="downloadDiscard" class="btn-flat">Cancel</button>
+          <button id="downloadSave" class="btn-flat">Download</button>
+        </div>
+      </div>
+    </div>
+
     <div class="md-modal" id="loadingDialog">
       <div class="md-content">
         <h4>Processing Image</h4>
