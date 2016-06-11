@@ -106,12 +106,6 @@ var ControlsController = function(){
     window.addEventListener("offline", this.onOffline.bind(this));
     window.addEventListener("online", this.onOnline.bind(this));
 
-    // if the page was loaded from cache offline, then offline
-    // event won't be triggered, so check it up front
-    if(!window.navigator.onLine){
-      this.onOffline();
-    }
-
     // ------------ ABOUT -----------------------------
     aboutButton = document.querySelector("#about-button");
     aboutButton.addEventListener("click", function(){
@@ -370,6 +364,12 @@ ControlsController.prototype._setOnCanvasRenderer = function (listener) {
   this._hide(this.navigationMobileFilters);
   this._hide(this.navigationMobileSave);
   this._hide(this.navigationMobileDiscard);
+
+  // if the page was loaded from cache offline, then offline
+  // event won't be triggered, so check it up front
+  if(!window.navigator.onLine){
+    this.onOffline();
+  }
 };
 
 ControlsController.prototype._show = function(element){

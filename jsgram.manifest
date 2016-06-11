@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# 2016-06-11 00:01
+# 2016-06-12 00:30
 
 CACHE:
 index.html
@@ -55,7 +55,7 @@ fonts/roboto/Roboto-Light.woff2
 fonts/roboto/Roboto-Medium.eot
 fonts/roboto/Roboto-Medium.ttf
 fonts/roboto/Roboto-Medium.woff
-fonts/roboto/Roboto-Medium.woff
+fonts/roboto/Roboto-Medium.woff2
 fonts/roboto/Roboto-Regular.eot
 fonts/roboto/Roboto-Regular.ttf
 fonts/roboto/Roboto-Regular.woff
