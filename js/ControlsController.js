@@ -47,7 +47,7 @@ var ControlsController = function(){
     bcDiscard = document.querySelector('#bc-discard');
     bcDiscard.addEventListener('click', this.handleTempChanges.bind(this, false));
 
-    // ------------ DIALOG ---------------------------
+    // ------------ DIALOGS ---------------------------
     this.confirmDialog = document.querySelector('#confirmDialog');
     this.confirmTitle = document.querySelector('#confirmTitle');
     this.confirmText = document.querySelector('#confirmText');
@@ -126,6 +126,7 @@ var ControlsController = function(){
     this.initSVG();
 }
 
+// Creates the SVG icon, which can be found in 'about' dialog
 ControlsController.prototype.initSVG = function(){
   var svgNS = "http://www.w3.org/2000/svg";  
 
@@ -153,6 +154,8 @@ ControlsController.prototype.onOnline = function(){
   this._hide(this.offlineMode);
 }
 
+// Sets up the audio sound, which is played when
+// and image is being downloaded to the computer
 ControlsController.prototype.initAudio = function(){
   this.audio = new Audio();
   if (this.audio.canPlayType("audio/ogg")) {
@@ -166,6 +169,7 @@ ControlsController.prototype._onDragover = function(e){
     e.preventDefault();
 }
 
+// On drop read the image
 ControlsController.prototype._onDrop = function (e) {
     e.preventDefault();
     console.log('_onDrop');
@@ -178,6 +182,8 @@ ControlsController.prototype._onDrop = function (e) {
     }
 }
 
+// Reads image from file, if the file is not an image
+// it just shows the drag&drop window again
 ControlsController.prototype._readImage = function(file) {
   if (file.type.match(/image\/.+/) != null) {  
     var fr = new FileReader();
@@ -189,6 +195,8 @@ ControlsController.prototype._readImage = function(file) {
   }
 }
 
+// Displays canvas and all the controls for editing
+// Hides the drag and drop view
 ControlsController.prototype.showCanvas = function(){
     this._hide(this.dd);
     this._hide(this.loading);
@@ -201,6 +209,8 @@ ControlsController.prototype.showCanvas = function(){
     this._show(this.navigationMobileDiscard);
 }
 
+// Hides canvas and all the controls for editing
+// Shows the drag and drop view
 ControlsController.prototype.hideCanvas = function(){
     this._show(this.dd);
     this._hide(this.canvas);
@@ -213,6 +223,7 @@ ControlsController.prototype.hideCanvas = function(){
     this._hide(this.navigationMobileDiscard);
 }
 
+// Sets the image to canvas controller
 ControlsController.prototype._setImage = function(e) {
   var img = new Image();
   img.onload = function () {
@@ -223,10 +234,12 @@ ControlsController.prototype._setImage = function(e) {
   img.src = e.target.result;
 }
 
+// Displays the download dialog
 ControlsController.prototype._saveImage = function(){
   this._showDownload();
 }
 
+// Triggers the download itself
 ControlsController.prototype.onDownload = function(e){
   e.preventDefault();
 
@@ -235,6 +248,7 @@ ControlsController.prototype.onDownload = function(e){
   this._playYeeeeeeeaaaah();
 }
 
+// Dialog which is shown when discarding the whole image (trash icon button)
 ControlsController.prototype._discardImage = function(){
   this._showConfirm('Discard Image?',
                     'Do you really want to discard your image without saving?',
@@ -247,6 +261,7 @@ ControlsController.prototype._discardImage = function(){
                     function() {}.bind(this));
 }
 
+// Show/Hide crop controls in the footer
 ControlsController.prototype._toggleCropControls = function () {
   if(this.controlsVisible == 1){
     this.promptUnsavedChanges();
@@ -265,6 +280,7 @@ ControlsController.prototype._toggleCropControls = function () {
   }    
 };
 
+// Show/Hide brightness and contrast controls in the footer
 ControlsController.prototype._toggleBrightnessControls = function () {
     if(this.controlsVisible == 1){
       this.promptUnsavedChanges();
@@ -278,6 +294,7 @@ ControlsController.prototype._toggleBrightnessControls = function () {
     }
 };
 
+// Shows dialog when there are unsaved changes
 ControlsController.prototype.promptUnsavedChanges = function(){
   this._showConfirm('Unsaved changes',
                     'Do you want to save changes?',
@@ -287,6 +304,7 @@ ControlsController.prototype.promptUnsavedChanges = function(){
                     this.handleTempChanges.bind(this, false));
 }
 
+// Saves or Discards temp changes
 ControlsController.prototype.handleTempChanges = function(saveTempChanges) {
 
   if(saveTempChanges){
@@ -304,6 +322,7 @@ ControlsController.prototype.handleTempChanges = function(saveTempChanges) {
   this.canvasRenderer._redraw();  
 }
 
+// Hides all controls in the footer
 ControlsController.prototype.hideAllControls = function(){
   this._hide(this._cropControls);
   this._hide(this._brightnessControls);
@@ -314,6 +333,7 @@ ControlsController.prototype.hideAllControls = function(){
   this.cropControlsVisible = 0;
 }
 
+// Show/Hide filter controls in the footer
 ControlsController.prototype._toggleFiltersControls = function () {
   if(this.controlsVisible == 1){
     this.promptUnsavedChanges();
@@ -326,6 +346,7 @@ ControlsController.prototype._toggleFiltersControls = function () {
   }
 };
 
+// On range changed, we apply the filter
 ControlsController.prototype._updateBrightnessImage = function(){
   this.currentBrightness = this._brightnessSlider.value;  
   this.currentContrast = this._contrastSlider.value;
@@ -334,17 +355,15 @@ ControlsController.prototype._updateBrightnessImage = function(){
   this.canvasRenderer.applyBrightnessContrast(parseInt(this.currentBrightness), parseInt(this.currentContrast));
 }
 
+// Applies passed filter on the current image
 ControlsController.prototype._applyFilter = function(func){
   this.canvasRenderer.applyFilter(func);
-}
-
-ControlsController.prototype._applyOil = function(){
-  this.canvasRenderer.applyOil(3, 128);
 }
 
 ControlsController.prototype._setOnCanvasRenderer = function (listener) {
   this.canvasRenderer = listener;
 
+  // at first we want to hide all controls
   this._hide(this.navigation);
   this._hide(this.navigationMobileCrop);
   this._hide(this.navigationMobileBrightness);
@@ -354,6 +373,8 @@ ControlsController.prototype._setOnCanvasRenderer = function (listener) {
 };
 
 ControlsController.prototype._show = function(element){
+  // when element has 'flexable' class, we set display:flex
+  // otherwise display:block will suffice
   if(isFlexable(element)){
     element.style.display = 'flex';
   } else {
@@ -376,6 +397,11 @@ function hasClass(element, cls) {
     return (' ' + element.className + ' ').indexOf(' ' + cls + ' ') > -1;
 }
 
+// Shows a confirm dialog
+// labelPositive - text for button with positive action
+// positive - function which will be called on positive button click
+// labelNegative - text for button with negative action
+// negative - function which will be called on negative button click
 ControlsController.prototype._showConfirm = function(title, label, labelPositive, positive, labelNegative, negative) {
     this.confirmTitle.innerHTML = title;
     this.confirmText.innerHTML = label;
@@ -401,6 +427,7 @@ ControlsController.prototype._hideConfirm = function(){
     this.overlay.className = this.overlay.className.replace(/(?:^|\s)md-show(?!\S)/g , '');
 }
 
+// Shows the about dialog
 ControlsController.prototype._showAbout = function() {
     this.aboutSave.onclick = function(){
       this._hideAbout();
@@ -419,6 +446,7 @@ ControlsController.prototype._hideAbout = function(){
     this.overlay.className = this.overlay.className.replace(/(?:^|\s)md-show(?!\S)/g , '');
 }
 
+// Shows the image download dialog
 ControlsController.prototype._showDownload = function() {
     this.downloadSave.onclick = function(){
       // calling form.submit() doesn't trigger onSubmit event
@@ -443,8 +471,7 @@ ControlsController.prototype._hideDownload = function(){
     this.overlay.className = this.overlay.className.replace(/(?:^|\s)md-show(?!\S)/g , '');
 }
 
-// ---------------
-
+// Well, yeah, it plays yeeeaaaaaaaaaah (used during image download)
 ControlsController.prototype._playYeeeeeeeaaaah = function () {
     if (this.audio.paused)
        this.audio.play(); 

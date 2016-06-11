@@ -34,6 +34,7 @@ var CanvasRenderer = function(debug){
   this.initHistory();
 }
 
+// Sets history handler
 CanvasRenderer.prototype.initHistory = function(){
   window.addEventListener('popstate', function(e) {
       var data = e.state;
@@ -44,10 +45,15 @@ CanvasRenderer.prototype.initHistory = function(){
   }.bind(this));
 }
 
+// Sets isEditMode flag, which is used while rendering
+// if true -> draw tempory image
+// otherwise -> draw from canvasData
 CanvasRenderer.prototype._setEditMode = function(editMode){
   this.isEditMode = editMode;
 }
 
+// Copies the temp image and data to canvasData,
+// and updates history
 CanvasRenderer.prototype._saveTempChanges = function(){
 
   // we have some stuff from THE FUTURE - get rid of it
@@ -67,6 +73,7 @@ CanvasRenderer.prototype._saveTempChanges = function(){
   console.log('Saving into history: image_' + this.currentHistoryItem);
 }
 
+// discards temporary changes
 CanvasRenderer.prototype._resetTempChanges = function(){
   this.tempImage = this.canvasData[this.currentHistoryItem - 1];
   this.tempImageData = this.canvasImageData[this.currentHistoryItem - 1];  
@@ -89,6 +96,10 @@ CanvasRenderer.prototype._fitCanvasToContainer = function() {
   this._redraw();
 }
 
+// sets up the canvasData, canvasImageData and temp image data
+// based on the passed image
+// If the image is over 2000px we set isLargeFlag to show
+// progress dialog during image processing operations
 CanvasRenderer.prototype._setBaseImage = function(img) {
   this.canvasData = [img];
   this.canvasImageData = [this._getImageData(img)];
@@ -102,6 +113,7 @@ CanvasRenderer.prototype._setBaseImage = function(img) {
   this._redraw();
 }
 
+// resets all the canvasData
 CanvasRenderer.prototype._discardImage = function() {
   this.canvasData = [];
   this.canvasImageData = [];
@@ -119,6 +131,7 @@ CanvasRenderer.prototype._redraw = function(){
 CanvasRenderer.prototype._renderImage = function(){
   var canvasDataLen = this.currentHistoryItem;
 
+  // if in edit mode -> draw temporary image (which for instance contains applied filters)
   if(this.isEditMode && this.tempImage != null){
     this._drawImage(this.tempImage);
   } else if(canvasDataLen > 0){
@@ -127,12 +140,14 @@ CanvasRenderer.prototype._renderImage = function(){
 
   if(this.drawCount < 15){
     this.drawCount++;
+    
     // vicemene jen kvuli firefoxu, protoze tam se proste
     // nekdy canvas spravne nevykreslil...
     window.requestAnimationFrame(this._renderImage.bind(this));  
   }
 }
 
+// Retrieves full sized imagedata from image
 CanvasRenderer.prototype._getImageData = function(img) {
   var canvas = document.createElement('canvas');
   canvas.width = img.width;
@@ -145,6 +160,8 @@ CanvasRenderer.prototype._getImageData = function(img) {
   return ctx.getImageData(0, 0, img.width, img.height);
 }
 
+// For downloading the image as png - makes use of the FileSaver.js
+// library, which saves it as blob (setting base64 to href was too big)
 CanvasRenderer.prototype._saveImage = function(imagename) {
   if(this.currentHistoryItem == 0){
     return;
@@ -165,6 +182,7 @@ CanvasRenderer.prototype._saveImage = function(imagename) {
   });
 }
 
+// Sets up event listeners for cropper on canvas
 CanvasRenderer.prototype._setCropper = function(){
   var canvas = document.querySelector('canvas');
 
@@ -185,6 +203,7 @@ CanvasRenderer.prototype._setCropper = function(){
   }.bind(this), false);
 }
 
+// Ultra method for handling cropper (moving the handle points)
 CanvasRenderer.prototype.onMouseInteraction = function(e, res) {
   e.preventDefault();
 
@@ -364,6 +383,7 @@ CanvasRenderer.prototype.onMouseInteraction = function(e, res) {
   }
 }
 
+// Sets temporary image data which are rendered in edit mode
 CanvasRenderer.prototype._setTempImage = function(imageData) {
   var canvas = document.createElement('canvas');
   canvas.width = imageData.width;
@@ -377,6 +397,7 @@ CanvasRenderer.prototype._setTempImage = function(imageData) {
   this.tempImageData = imageData;
 }
 
+// Sets image from from canvasData based on history change
 CanvasRenderer.prototype._setHistoryImage = function(index) {
   if(index > this.canvasData.length){
     index = this.canvasData.length;
@@ -413,6 +434,7 @@ CanvasRenderer.prototype._drawImageData = function(imageData){
   this._drawImage(image);
 }
 
+// Sets proper positions of cropper handles
 CanvasRenderer.prototype.initCropper = function(){
   this.cropperHandleTopLeft.x = this.offsetX;
   this.cropperHandleTopLeft.y = this.offsetY;
@@ -427,6 +449,7 @@ CanvasRenderer.prototype.initCropper = function(){
   this.cropperHandleBottomRight.y = this.offsetY + this.tempImage.height*this.ratio;  
 }
 
+// Resets the cropper handles to invalid values
 CanvasRenderer.prototype.resetCropper = function(){
   this.cropperHandleTopLeft.reset();
   this.cropperHandleBottomLeft.reset();
@@ -461,8 +484,6 @@ CanvasRenderer.prototype.drawCropper = function(ctx){
 
   // BOTTOM RIGHT HANDLE
   ctx.fillRect(this.cropperHandleBottomRight.x - 10, this.cropperHandleBottomRight.y - 10, 10, 10);
-
-  // ctx.setLineDash([10, 5]);
   
   //TOP LEFT -> TOP RIGHT
   ctx.beginPath();
@@ -516,6 +537,7 @@ CanvasRenderer.prototype.drawCropper = function(ctx){
   ctx.stroke();
 }
 
+// Draws the image to canvas, computes the offsets so that the image is centered
 CanvasRenderer.prototype._drawImage = function(img){
   var hRatio = this.canvas.width  / img.width;
   var vRatio = this.canvas.height / img.height;
@@ -559,6 +581,7 @@ CanvasRenderer.prototype.createImageData = function(w, h){
   }
 }
 
+// Applies the brightness and contrast changes (-100, +100) and redraws the image
 CanvasRenderer.prototype.applyBrightnessContrast = function(brigtness, contrast){
   this.showProgress();
 
@@ -569,9 +592,10 @@ CanvasRenderer.prototype.applyBrightnessContrast = function(brigtness, contrast)
     this._redraw();
    
     this.hideProgress(); 
-  }.bind(this), 100);
+  }.bind(this), 200);
 }
 
+// Applies crop based on current handle values.
 CanvasRenderer.prototype.applyCrop = function(){
   img = this.tempImage;
   
@@ -600,6 +624,7 @@ CanvasRenderer.prototype.applyCrop = function(){
   this._redraw();
 }
 
+//Applies any basic filter which is defined in Filters.js
 CanvasRenderer.prototype.applyFilter = function(func){
   this.showProgress();
 
@@ -610,35 +635,7 @@ CanvasRenderer.prototype.applyFilter = function(func){
     this._redraw(); 
    
     this.hideProgress(); 
-  }.bind(this), 100);
-}
-
-CanvasRenderer.prototype.applyMosaic = function(blockSize){
-  var ctx = this.canvas.getContext("2d");
-  var hRatio = this.canvas.width  / img.width; //NOT GOING TO WORK AFTER CROPPING
-  var vRatio = this.canvas.height / img.height;
-  var ratio  = Math.min (hRatio, vRatio);
-  this.offsetX = (this.canvas.width - img.width*ratio) / 2;
-  this.offsetY = (this.canvas.height - img.height*ratio) / 2;
-
-  this.imageData = ctx.getImageData(this.offsetX, this.offsetY, img.width*ratio, img.height*ratio);
-  imageDataCopy = Filters.Mosaic(this.imageData, copyImageData(ctx, this.imageData), blockSize);
-  this.imageData = imageDataCopy; //TODO backup imageData to be able to step back
-
-  ctx.putImageData(this.imageData, this.offsetX, this.offsetY);
-}
-
-CanvasRenderer.prototype.applyOil = function(range, levels){
-  this.showProgress();
-
-  setTimeout(function(){
-    var imageData = this.canvasImageData[this.canvasImageData.length - 1];
-    imageDataCopy = Filters.Oil(imageData, this.copyImageData(imageData), range, levels);
-    this._setTempImage(imageDataCopy);
-    this._redraw(); 
-   
-    this.hideProgress(); 
-  }.bind(this), 100);
+  }.bind(this), 200);
 }
 
 CanvasRenderer.prototype.showProgress = function(){
@@ -659,6 +656,7 @@ CanvasRenderer.prototype.setControlsController = function(controller){
   this.controlsController = controller;
 }
 
+// A single cropper handle (displayed in the corner)
 var CropperHandle = function(x, y){
   this.x = x;
   this.y = y;
@@ -669,14 +667,10 @@ CropperHandle.prototype.reset = function(){
   this.y = -1;
 }
 
+// Holder for the cropper bounds
 var RatioCrop = function(left, top, right, bottom){
   this.left = left;
   this.top = top;
   this.right = right;
   this.bottom = bottom;
-}
-
-var HistoryImageHolder = function(image, imageData){
-  this.image = image;
-  this.imageData = imageData;
 }
