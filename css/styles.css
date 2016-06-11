@@ -88,6 +88,15 @@ footer ~ .brightness-controls > table tr,td {
   font-weight: 100;
 }
 
+.md-modal svg {
+  transition: all .5s ease-out;
+}
+
+.md-modal svg:hover {
+  transform:scale(1.4);
+  transition:all .3s cubic-bezier(.3,.86,.61,1.63);
+}
+
 #loading-wrapper {
   display: flex;
   flex: 1 0 auto;
@@ -175,3 +184,5 @@ footer ~ .brightness-controls > table tr,td {
 #offline-mode {
   background-color: #e53935;
 }
+
+

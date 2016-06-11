@@ -122,6 +122,27 @@ var ControlsController = function(){
     aboutButtonMobile.addEventListener("click", function(){
       this._showAbout();
     }.bind(this));
+    this.aboutSvg = document.querySelector("#modal-svg");
+    this.initSVG();
+}
+
+ControlsController.prototype.initSVG = function(){
+  var svgNS = "http://www.w3.org/2000/svg";  
+
+  var icon = document.createElementNS(svgNS, "path");
+  icon.setAttributeNS(null, "d", "M15 0h1v11.5c0 1.381-1.567 2.5-3.5 2.5s-3.5-1.119-3.5-2.5c0-1.381 1.567-2.5 3.5-2.5 0.979 0 1.865 0.287 2.5 0.751v-5.751l-8 1.778v7.722c0 1.381-1.567 2.5-3.5 2.5s-3.5-1.119-3.5-2.5c0-1.381 1.567-2.5 3.5-2.5 0.979 0 1.865 0.287 2.5 0.751v-9.751l9-2z");
+  icon.setAttributeNS(null, "fill", "rgba(0, 0, 0, 0.6)");
+  icon.setAttributeNS(null, "stroke", "none");
+
+  this.aboutSvg.addEventListener('mouseenter', function(){
+    icon.setAttributeNS(null, "fill", "white");
+  });
+
+  this.aboutSvg.addEventListener('mouseleave', function(){
+    icon.setAttributeNS(null, "fill", "rgba(0, 0, 0, 0.6)");
+  });
+
+  this.aboutSvg.appendChild(icon);
 }
 
 ControlsController.prototype.onOffline = function(){
